@@ -1,5 +1,113 @@
-from __future__ import unicode_literals
-
+from base64 import b64encode
+from Crypto.Cipher import AES, PKCS1_OAEP
+from Crypto.PublicKey import RSA
+from Crypto import Random
+from django.core import exceptions
+from django.conf import settings
 from django.db import models
 
-# Create your models here.
+import validators
+
+class Group(models.Model):
+    name = models.CharField(max_length=255, primary_key=True, validators=[validators.validate_group_name])
+
+    def __unicode__(self):
+        return "{0}".format(self.name, )
+
+class Node(models.Model):
+    name = models.CharField(max_length=255, primary_key=True, validators=[validators.validate_node_name])
+    groups = models.ManyToManyField(Group, blank=True)
+
+    def __unicode__(self):
+        return "{0}".format(self.name, )
+
+class Parameter(models.Model):
+    name = models.CharField(max_length=255, validators=[validators.validate_parameter_name])
+    value = models.TextField(null=True, blank=True)
+    encryption_key = models.CharField(max_length=512, null=True, blank=True)
+    encrypted = models.BooleanField(default=False)
+
+    class Meta:
+        abstract = True
+
+    def __init__(self, *args, **kwargs):
+        super(Parameter, self).__init__(*args, **kwargs)
+
+        # Keep a copy for later comparison
+        self.initial_value = self.value
+        self.initial_encryption_key = self.encryption_key
+        self.initial_encrypted = self.encrypted
+
+    def __unicode__(self):
+        return "{0}".format(self.name, )
+
+    # Validate fields
+    def clean(self):
+        # New object or changed value, encrypt it if needed
+        if (self.initial_value != self.value) or not self.pk:
+            if self.encrypted:
+                self.encrypt()
+
+        # Changed encryption
+        elif self.initial_encrypted != self.encrypted:
+            # Added encryption
+            if self.encrypted:
+                self.encrypt()
+
+            # Removed encryption
+            else:
+                raise exceptions.ValidationError({'encrypted': 'Can\'t remove encryption of an already encrypted value'})
+
+        # Changed encryption key
+        elif self.initial_encryption_key != self.encryption_key:
+            if self.initial_encrypted:
+                raise exceptions.ValidationError({'encryption_key': 'Can\'t change encryption key of an encrypted value'})
+
+        # Remove unneeded encryption_key
+        if not self.encrypted:
+            self.encryption_key = ''
+
+    # Encrypt value if needed
+    def encrypt(self):
+        if not hasattr(settings, 'PUPPET_PUBLIC_KEY'):
+            raise exceptions.ValidationError({'encrypted': 'Can\'t encrypt value: missing PUPPET_PUBLIC_KEY setting variable'})
+
+        try:
+            with open(settings.PUPPET_PUBLIC_KEY) as file:
+                pubkey = RSA.importKey(file.read())
+        except Exception as e:
+            raise exceptions.ValidationError({'encrypted': 'Public key error: %s' % e})
+
+        # Only intercept exceptions related to provided datas (not pycrypto possible exceptions)
+        try:
+            value = self.value.encode('utf-8')
+        except ValueError as e:
+            raise exceptions.ValidationError({'encrypted': 'Can\'t encode value as UTF-8: %s' % e})
+
+        try:
+            # Encrypt data with an AES-128-CFB symetric key (for plaintext values too big for PKCS1_OAEP)
+            # We need to pad manually the data, as pyCrypto doesn't do it
+            key = Random.new().read(16)
+            iv = Random.new().read(AES.block_size)
+
+            pad = lambda s: s + (AES.block_size - len(s) % AES.block_size) * chr(AES.block_size - len(s) % AES.block_size)
+            self.value = b64encode(AES.new(key, AES.MODE_CBC, iv).encrypt(pad(value)))
+
+            # AES key is then encrypted with public key to ensure key security (only puppetserver can decrypt it)
+            # First 16 bytes (AES.block_size) are for the initialization vector (IV)
+            self.encryption_key = b64encode(iv + PKCS1_OAEP.new(pubkey).encrypt(key))
+        except Exception as e:
+            raise exceptions.ValidationError({'encrypted': 'Can\'t encrypt value: %s' % e})
+
+class GroupParameter(Parameter):
+    group = models.ForeignKey(Group, related_name='parameters')
+
+    class Meta:
+        unique_together = (("name", "group"),)
+
+class NodeParameter(Parameter):
+    node = models.ForeignKey(Node, related_name='parameters')
+
+    class Meta:
+        unique_together = (("name", "node"),)
+
