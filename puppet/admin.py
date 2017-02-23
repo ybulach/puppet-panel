@@ -24,6 +24,11 @@ class GroupAdmin(admin.ModelAdmin):
     ordering = ['name']
     search_fields = ('name',)
 
+    class GroupAdminForm(forms.ModelForm):
+        classes = forms.ModelMultipleChoiceField(required=False, widget=admin.widgets.FilteredSelectMultiple('Classes', is_stacked=False), queryset=models.Class.objects.all())
+
+    form = GroupAdminForm
+
 # Add parameters in nodes administration forms
 class NodeParameterInline(admin.TabularInline):
     model = models.NodeParameter
@@ -47,10 +52,12 @@ class NodeAdmin(admin.ModelAdmin):
 
     class NodeAdminForm(forms.ModelForm):
         groups = forms.ModelMultipleChoiceField(required=False, widget=admin.widgets.FilteredSelectMultiple('Groups', is_stacked=False), queryset=models.Group.objects.all())
+        classes = forms.ModelMultipleChoiceField(required=False, widget=admin.widgets.FilteredSelectMultiple('Classes', is_stacked=False), queryset=models.Class.objects.all())
 
     form = NodeAdminForm
 
 # Add models in administration
 admin.site.register(models.Group, GroupAdmin)
 admin.site.register(models.Node, NodeAdmin)
+admin.site.register(models.Class)
 

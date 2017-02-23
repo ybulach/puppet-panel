@@ -8,8 +8,18 @@ from django.db import models
 
 import validators
 
+class Class(models.Model):
+    name = models.CharField(max_length=255, primary_key=True, validators=[validators.validate_class_name])
+
+    class Meta:
+        verbose_name_plural = 'Classes'
+
+    def __unicode__(self):
+        return "{0}".format(self.name, )
+
 class Group(models.Model):
     name = models.CharField(max_length=255, primary_key=True, validators=[validators.validate_group_name])
+    classes = models.ManyToManyField(Class, blank=True)
 
     def __unicode__(self):
         return "{0}".format(self.name, )
@@ -17,6 +27,7 @@ class Group(models.Model):
 class Node(models.Model):
     name = models.CharField(max_length=255, primary_key=True, validators=[validators.validate_node_name])
     groups = models.ManyToManyField(Group, blank=True)
+    classes = models.ManyToManyField(Class, blank=True)
 
     def __unicode__(self):
         return "{0}".format(self.name, )

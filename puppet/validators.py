@@ -13,3 +13,7 @@ validate_node_name = validators.RegexValidator('^%s$' % node_name_regex, _error_
 # Parameter names (i.e. my_parameter::name-1.0)
 parameter_name_regex = r'[\w:.-]+'
 validate_parameter_name = validators.RegexValidator('^%s$' % parameter_name_regex, _error_message % parameter_name_regex, 'invalid')
+
+# Class names (i.e. my_module::my_class)
+class_name_regex = r'[\w:]+'
+validate_class_name = validators.RegexValidator('^%s$' % class_name_regex, _error_message % class_name_regex, 'invalid')
