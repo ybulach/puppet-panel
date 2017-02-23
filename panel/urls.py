@@ -12,9 +12,16 @@ Class-based views
 Including another URLconf
     1. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
 
+import puppet
+
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^api/', include('puppet.urls'))
 ]
+
+# Admin is enabled in debug mode only
+if settings.DEBUG:
+    urlpatterns.append(url(r'^admin/', include(admin.site.urls)))
