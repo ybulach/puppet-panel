@@ -2,5 +2,6 @@ Django
 djangorestframework
 django_rest_apikey
 django-rest-framework-nested
+django-rest-swagger
 MySQL-python
 pycrypto
