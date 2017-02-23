@@ -1,0 +1,7 @@
+*.pyc
+*.sqlite3
+*.log
+*.pem
+*.crt
+*.key
+settings_local.py

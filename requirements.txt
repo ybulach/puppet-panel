@@ -1,0 +1,6 @@
+Django
+djangorestframework
+django_rest_apikey
+django-rest-framework-nested
+MySQL-python
+pycrypto
