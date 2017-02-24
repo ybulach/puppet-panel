@@ -1,5 +1,6 @@
 from django import shortcuts
-from rest_framework import viewsets
+from rest_framework import mixins, response, status, viewsets
+import rest_framework.serializers
 
 import models
 import serializers
@@ -39,7 +40,7 @@ class NestedModelViewSet(viewsets.ModelViewSet):
             nested_field = {self.nested_unique_field: request.data[self.nested_unique_field]}
             nested_field.update(parent_field)
             if self.model_nested.objects.filter(**nested_field).exists():
-                raise ValidationError({self.parent_unique_field: 'Object with this %s already exists.' % self.parent_unique_field})
+                raise rest_framework.serializers.ValidationError({self.parent_unique_field: 'Object with this %s already exists.' % self.parent_unique_field})
 
         # Create, adding the parent id
         new_kwargs = kwargs.copy()
@@ -55,11 +56,113 @@ class NestedModelViewSet(viewsets.ModelViewSet):
         new_kwargs.update(parent_field)
         serializer.save(**new_kwargs)
 
+# A generic view set to be used by nested many to many relations between models (modify the links between the models)
+class ManyToManyNestedViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
+    # Overwrite this attributes
+    parent_kwargs = 'mymodel'
+    parent_field = 'name'
+    nested_field = 'mymodels'
+    model_parent = None
+    model_nested = None
+
+    # Get the parent
+    def get_parent(self):
+        return shortcuts.get_object_or_404(
+            self.model_parent.objects.all(),
+            name=self.kwargs['%s__%s' % (self.parent_kwargs, self.parent_field)]
+        )
+
+    # List classes of node/group
+    def list(self, request, *args, **kwargs):
+        parent = self.get_parent()
+
+        # Return result
+        serializer = self.get_serializer(getattr(parent, self.nested_field), many=True)
+        return response.Response(serializer.data)
+
+    # Get one class
+    def retrieve(self, request, *args, **kwargs):
+        # Get the node/group
+        parent = self.get_parent()
+
+        # Return result
+        serializer = self.get_serializer(shortcuts.get_object_or_404(getattr(parent, self.nested_field), name=self.kwargs[self.lookup_field]))
+        return response.Response(serializer.data)
+
+    # Add a class
+    def create(self, request, *args, **kwargs):
+        parent = self.get_parent()
+
+        # Validate provided datas
+        if not self.lookup_field in request.data:
+            raise rest_framework.serializers.ValidationError({self.lookup_field: 'This attribute must be provided'})
+
+        # Add class
+        cls = shortcuts.get_object_or_404(self.model_nested.objects.all(), name=request.data[self.lookup_field])
+        if cls in getattr(parent, self.nested_field).all():
+            raise rest_framework.serializers.ValidationError({self.lookup_field: 'class with this %s already added' % self.lookup_field})
+        getattr(parent, self.nested_field).add(cls)
+
+        # Return result
+        serializer = self.get_serializer(cls)
+        headers = self.get_success_headers(serializer.data)
+        return response.Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    # Remove a class
+    def destroy(self, request, *args, **kwargs):
+        parent = self.get_parent()
+
+        # Remove class
+        cls = shortcuts.get_object_or_404(getattr(parent, self.nested_field).all(), name=kwargs[self.lookup_field])
+        getattr(parent, self.nested_field).remove(cls)
+
+        # Return result
+        return response.Response(status=status.HTTP_204_NO_CONTENT)
+
 # Classes
 class ClassViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ClassSerializer
     lookup_value_regex = validators.class_name_regex
     queryset = models.Class.objects.all()
+
+class ClassNestedViewSet(ManyToManyNestedViewSet):
+    # Overwrite this attributes
+    parent_kwargs = 'mymodel'
+    parent_field = 'name'
+    model_parent = None
+
+    # Default attributes
+    serializer_class = serializers.ClassSerializer
+    lookup_field = 'name'
+    lookup_value_regex = validators.class_name_regex
+
+    # Nested object attributes
+    nested_field = 'classes'
+    model_nested = models.Class
+
+# Groups
+class GroupViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.GroupSerializer
+    lookup_value_regex = validators.group_name_regex
+    queryset = models.Group.objects.all()
+
+class GroupParameterViewSet(NestedModelViewSet):
+    serializer_class = serializers.GroupParameterSerializer
+    lookup_field = 'name'
+    lookup_value_regex = validators.parameter_name_regex
+
+    # Nested object attributes
+    parent_kwargs_lookup = 'group'
+    parent_unique_field = 'pk'
+    nested_parent_field = 'group_id'
+    nested_unique_field = 'name'
+    model_parent = models.Group
+    model_nested = models.GroupParameter
+
+class GroupClassViewSet(ClassNestedViewSet):
+    parent_kwargs = 'group'
+    parent_field = 'pk'
+    model_parent = models.Group
 
 # Nodes
 class NodeViewSet(viewsets.ModelViewSet):
@@ -80,21 +183,20 @@ class NodeParameterViewSet(NestedModelViewSet):
     model_parent = models.Node
     model_nested = models.NodeParameter
 
-# Groups
-class GroupViewSet(viewsets.ModelViewSet):
-    serializer_class = serializers.GroupSerializer
-    lookup_value_regex = validators.group_name_regex
-    queryset = models.Group.objects.all()
+class NodeClassViewSet(ClassNestedViewSet):
+    parent_kwargs = 'node'
+    parent_field = 'pk'
+    model_parent = models.Node
 
-class GroupParameterViewSet(NestedModelViewSet):
-    serializer_class = serializers.GroupParameterSerializer
+class NodeGroupViewSet(ManyToManyNestedViewSet):
+    # Default attributes
+    serializer_class = serializers.GroupSerializer
     lookup_field = 'name'
-    lookup_value_regex = validators.parameter_name_regex
+    lookup_value_regex = validators.group_name_regex
 
     # Nested object attributes
-    parent_kwargs_lookup = 'group'
-    parent_unique_field = 'pk'
-    nested_parent_field = 'group_id'
-    nested_unique_field = 'name'
-    model_parent = models.Group
-    model_nested = models.GroupParameter
+    parent_kwargs = 'node'
+    parent_field = 'pk'
+    nested_field = 'groups'
+    model_parent = models.Node
+    model_nested = models.Group
