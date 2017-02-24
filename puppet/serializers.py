@@ -53,28 +53,58 @@ class NodeParameterSerializer(ValidatedSerializer):
         fields = ('name', 'value', 'encryption_key', 'encrypted')
         read_only_fields = ('encryption_key',)
 
-class NodeSerializer(serializers.ModelSerializer):
+class NodeSerializer_Light(serializers.ModelSerializer):
+    status = serializers.SerializerMethodField()
+    report_timestamp = serializers.SerializerMethodField()
+    catalog_timestamp = serializers.SerializerMethodField()
+    facts_timestamp = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Node
+        fields = ('name', 'status', 'report_timestamp', 'catalog_timestamp', 'facts_timestamp')
+        read_only_fields = ('status', 'report_timestamp', 'catalog_timestamp', 'facts_timestamp')
+
+    def get_node(self, name):
+        try:
+            db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
+            return db.node(name)
+        except Exception as e:
+            if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 404:
+                return []
+            raise rest_framework.exceptions.APIException('Can\'t get node from PuppetDB: %s' % e)
+
+    # Method fields
+    def get_status(self, obj):
+        node = self.get_node(obj.name)
+        return node.status
+
+    def get_report_timestamp(self, obj):
+        node = self.get_node(obj.name)
+        return node.report_timestamp
+
+    def get_catalog_timestamp(self, obj):
+        node = self.get_node(obj.name)
+        return node.catalog_timestamp
+
+    def get_facts_timestamp(self, obj):
+        node = self.get_node(obj.name)
+        return node.facts_timestamp
+
+class NodeSerializer_Full(NodeSerializer_Light):
     classes = ClassSerializer(many=True, read_only=True)
     groups = GroupSerializer(many=True, read_only=True)
     parameters = NodeParameterSerializer(many=True, read_only=True)
     reports = serializers.SerializerMethodField()
 
-    class Meta:
-        model = models.Node
-        fields = ('name', 'groups', 'classes', 'parameters', 'reports')
-        read_only_fields = ('groups', 'classes', 'parameters','reports')
+    class Meta(NodeSerializer_Light.Meta):
+        fields = NodeSerializer_Light.Meta.fields + ('groups', 'classes', 'parameters', 'reports')
+        read_only_fields = NodeSerializer_Light.Meta.read_only_fields + ('groups', 'classes', 'parameters', 'reports')
 
+    # Method fields
     def get_reports(self, obj):
-        try:
-            db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
-            node = db.node(obj.name)
-
-            return [{
-                'transaction': report.transaction,
-                'start': report.start,
-                'end': report.end
-            } for report in node.reports()]
-        except Exception as e:
-            if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 404:
-                return []
-            raise rest_framework.exceptions.APIException('Can\'t get reports from PuppetDB: %s' % e)
+        node = self.get_node(obj.name)
+        return [{
+            'transaction': report.transaction,
+            'start': report.start,
+            'end': report.end
+        } for report in node.reports()]

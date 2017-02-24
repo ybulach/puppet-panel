@@ -166,9 +166,14 @@ class GroupClassViewSet(ClassNestedViewSet):
 
 # Nodes
 class NodeViewSet(viewsets.ModelViewSet):
-    serializer_class = serializers.NodeSerializer
     lookup_value_regex = validators.node_name_regex
     queryset = models.Node.objects.all()
+
+    def get_serializer_class(self):
+        if self.action in ['retrieve']:
+            return serializers.NodeSerializer_Full
+        else:
+            return serializers.NodeSerializer_Light
 
 class NodeParameterViewSet(NestedModelViewSet):
     serializer_class = serializers.NodeParameterSerializer
