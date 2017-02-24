@@ -1,5 +1,9 @@
+from django.conf import settings
 from django.core import exceptions
+import pypuppetdb
 from rest_framework import serializers
+import rest_framework.exceptions
+import requests.exceptions
 
 import models
 
@@ -26,23 +30,6 @@ class ClassSerializer(serializers.ModelSerializer):
         model = models.Class
         fields = ('name', )
 
-# Nodes
-class NodeParameterSerializer(ValidatedSerializer):
-    class Meta:
-        model = models.NodeParameter
-        fields = ('name', 'value', 'encryption_key', 'encrypted')
-        read_only_fields = ('encryption_key',)
-
-class NodeSerializer(serializers.ModelSerializer):
-    classes = serializers.SlugRelatedField(slug_field='name', queryset=models.Class.objects.all(), many=True, allow_null=True)
-    groups = serializers.SlugRelatedField(slug_field='name', queryset=models.Group.objects.all(), many=True, allow_null=True)
-    parameters = NodeParameterSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = models.Node
-        fields = ('name', 'groups', 'classes', 'parameters')
-        read_only_fields = ('parameters',)
-
 # Groups
 class GroupParameterSerializer(ValidatedSerializer):
     class Meta:
@@ -51,10 +38,43 @@ class GroupParameterSerializer(ValidatedSerializer):
         read_only_fields = ('encryption_key',)
 
 class GroupSerializer(serializers.ModelSerializer):
-    classes = serializers.SlugRelatedField(slug_field='name', queryset=models.Class.objects.all(), many=True, allow_null=True)
+    classes = ClassSerializer(many=True, read_only=True)
     parameters = GroupParameterSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Group
         fields = ('name', 'classes', 'parameters')
-        read_only_fields = ('parameters',)
+        read_only_fields = ('classes', 'parameters')
+
+# Nodes
+class NodeParameterSerializer(ValidatedSerializer):
+    class Meta:
+        model = models.NodeParameter
+        fields = ('name', 'value', 'encryption_key', 'encrypted')
+        read_only_fields = ('encryption_key',)
+
+class NodeSerializer(serializers.ModelSerializer):
+    classes = ClassSerializer(many=True, read_only=True)
+    groups = GroupSerializer(many=True, read_only=True)
+    parameters = NodeParameterSerializer(many=True, read_only=True)
+    reports = serializers.SerializerMethodField()
+
+    class Meta:
+        model = models.Node
+        fields = ('name', 'groups', 'classes', 'parameters', 'reports')
+        read_only_fields = ('groups', 'classes', 'parameters','reports')
+
+    def get_reports(self, obj):
+        try:
+            db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
+            node = db.node(obj.name)
+
+            return [{
+                'transaction': report.transaction,
+                'start': report.start,
+                'end': report.end
+            } for report in node.reports()]
+        except Exception as e:
+            if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 404:
+                return []
+            raise rest_framework.exceptions.APIException('Can\'t get reports from PuppetDB: %s' % e)

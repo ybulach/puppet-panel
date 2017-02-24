@@ -5,3 +5,4 @@ django-rest-framework-nested
 django-rest-swagger
 MySQL-python
 pycrypto
+pypuppetdb

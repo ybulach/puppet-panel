@@ -113,3 +113,11 @@ SWAGGER_SETTINGS = {
     'DOC_EXPANSION': 'list',
     'VALIDATOR_URL': None
 }
+
+
+# Puppet DB
+# Default values
+
+PUPPETDB_HOST = 'localhost'
+
+PUPPETDB_PORT = '8080'
