@@ -72,7 +72,7 @@ class ManyToManyNestedViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mi
     def get_parent(self):
         return shortcuts.get_object_or_404(
             self.model_parent.objects.all(),
-            name=self.kwargs['%s__%s' % (self.parent_kwargs, self.parent_field)]
+            **{self.parent_field: self.kwargs['%s__%s' % (self.parent_kwargs, self.parent_field)]}
         )
 
     # List classes of node/group
@@ -92,7 +92,7 @@ class ManyToManyNestedViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mi
             raise rest_framework.serializers.ValidationError({self.lookup_field: 'This attribute must be provided'})
 
         # Add class
-        cls = shortcuts.get_object_or_404(self.model_nested.objects.all(), name=request.data[self.lookup_field])
+        cls = shortcuts.get_object_or_404(self.model_nested.objects.all(), **{self.lookup_field: request.data[self.lookup_field]})
         if cls in getattr(parent, self.nested_field).all():
             raise rest_framework.serializers.ValidationError({self.lookup_field: 'class with this %s already added' % self.lookup_field})
         getattr(parent, self.nested_field).add(cls)
@@ -107,7 +107,7 @@ class ManyToManyNestedViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mi
         parent = self.get_parent()
 
         # Remove class
-        cls = shortcuts.get_object_or_404(getattr(parent, self.nested_field).all(), name=kwargs[self.lookup_field])
+        cls = shortcuts.get_object_or_404(getattr(parent, self.nested_field).all(), **{self.lookup_field: kwargs[self.lookup_field]})
         getattr(parent, self.nested_field).remove(cls)
 
         # Return result
