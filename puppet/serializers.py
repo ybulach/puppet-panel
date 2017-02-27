@@ -104,7 +104,7 @@ class NodeSerializer_Light(serializers.ModelSerializer):
                 self.node = db.node(name)
             except Exception as e:
                 if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 404:
-                    return []
+                    return None
                 raise rest_framework.exceptions.APIException('Can\'t get node from PuppetDB: %s' % e)
 
         return self.node
@@ -112,19 +112,19 @@ class NodeSerializer_Light(serializers.ModelSerializer):
     # Method fields
     def get_status(self, obj):
         node = self.get_node(obj.name)
-        return node.status
+        return node.status if node else None
 
     def get_report_timestamp(self, obj):
         node = self.get_node(obj.name)
-        return node.report_timestamp
+        return node.report_timestamp if node else None
 
     def get_catalog_timestamp(self, obj):
         node = self.get_node(obj.name)
-        return node.catalog_timestamp
+        return node.catalog_timestamp if node else None
 
     def get_facts_timestamp(self, obj):
         node = self.get_node(obj.name)
-        return node.facts_timestamp
+        return node.facts_timestamp if node else None
 
 class NodeSerializer_Full(NodeSerializer_Light):
     classes = serializers.StringRelatedField(many=True)
@@ -144,4 +144,4 @@ class NodeSerializer_Full(NodeSerializer_Light):
             'status': report.status,
             'start': report.start,
             'end': report.end
-        } for report in node.reports()]
+        } for report in node.reports()] if node else []
