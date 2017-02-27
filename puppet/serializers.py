@@ -30,6 +30,35 @@ class ClassSerializer(serializers.ModelSerializer):
         model = models.Class
         fields = ('name', )
 
+# Reports
+class ReportSerializer(serializers.Serializer):
+    transaction = serializers.CharField(allow_blank=False, trim_whitespace=False, required=True)
+    node = serializers.CharField(allow_blank=False, trim_whitespace=False, required=True)
+    status = serializers.CharField(allow_blank=False, trim_whitespace=False, required=True)
+    start = serializers.DateTimeField(required=True)
+    end = serializers.DateTimeField(required=True)
+    logs = serializers.SerializerMethodField()
+
+    class Meta:
+        fields = ('transaction', 'node', 'status', 'start', 'end', 'logs')
+
+    def get_report(self, transaction):
+        try:
+            db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
+            query = pypuppetdb.QueryBuilder.EqualsOperator('transaction_uuid', transaction)
+            return db.reports(query=query).next()
+        except Exception as e:
+            raise rest_framework.exceptions.APIException('Can\'t get report from PuppetDB: %s' % e)
+
+    # Method fields
+    def get_logs(self, obj):
+        report = self.get_report(obj.transaction)
+        return [{
+            'level': log['level'],
+            'time': log['time'],
+            'message': log['message']
+        } for log in report.logs]
+
 # Groups
 class GroupParameterSerializer(ValidatedSerializer):
     class Meta:
@@ -105,6 +134,7 @@ class NodeSerializer_Full(NodeSerializer_Light):
         node = self.get_node(obj.name)
         return [{
             'transaction': report.transaction,
+            'status': report.status,
             'start': report.start,
             'end': report.end
         } for report in node.reports()]

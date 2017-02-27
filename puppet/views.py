@@ -1,6 +1,9 @@
 from django import shortcuts
-from rest_framework import mixins, response, status, viewsets
+from django.conf import settings
+import pypuppetdb
+from rest_framework import exceptions, mixins, response, status, viewsets
 import rest_framework.serializers
+import requests.exceptions
 
 import models
 import serializers
@@ -139,6 +142,38 @@ class ClassNestedViewSet(ManyToManyNestedViewSet):
     # Nested object attributes
     nested_field = 'classes'
     model_nested = models.Class
+
+# Reports
+class ReportViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    serializer_class = serializers.ReportSerializer
+    lookup_field = 'transaction'
+    lookup_value_regex = validators.report_uuid_regex
+
+    # Get the connection to PuppetDB API
+    def get_report(self, transaction):
+        try:
+            db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
+            return db.report(transaction)
+        except Exception as e:
+            if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 404:
+                return []
+            raise exceptions.APIException('Can\'t get report from PuppetDB: %s' % e)
+
+    # Get one report
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
+            query = pypuppetdb.QueryBuilder.EqualsOperator('transaction_uuid', kwargs[self.lookup_field])
+            report = db.reports(query=query).next()
+            print report
+        except Exception as e:
+            if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 404:
+                raise
+            raise exceptions.APIException('Can\'t get report from PuppetDB: %s' % e)
+
+        # Return result
+        serializer = self.get_serializer(report)
+        return response.Response(serializer.data)
 
 # Groups
 class GroupViewSet(viewsets.ModelViewSet):

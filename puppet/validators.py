@@ -17,3 +17,7 @@ validate_parameter_name = validators.RegexValidator('^%s$' % parameter_name_rege
 # Class names (i.e. my_module::my_class)
 class_name_regex = r'[\w:]+'
 validate_class_name = validators.RegexValidator('^%s$' % class_name_regex, _error_message % class_name_regex, 'invalid')
+
+# Report transaction (UUID) (i.e. c15dc7ce-ed39-46c1-a031-9009f83abb9e)
+report_uuid_regex = r'[a-z0-9-]+'
+validate_report_uuid = validators.RegexValidator('^%s$' % report_uuid_regex, _error_message % report_uuid_regex, 'invalid')
