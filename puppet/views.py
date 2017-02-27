@@ -165,7 +165,6 @@ class ReportViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
             query = pypuppetdb.QueryBuilder.EqualsOperator('transaction_uuid', kwargs[self.lookup_field])
             report = db.reports(query=query).next()
-            print report
         except Exception as e:
             if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 404:
                 raise

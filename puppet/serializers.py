@@ -43,12 +43,15 @@ class ReportSerializer(serializers.Serializer):
         fields = ('transaction', 'node', 'status', 'start', 'end', 'logs')
 
     def get_report(self, transaction):
-        try:
-            db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
-            query = pypuppetdb.QueryBuilder.EqualsOperator('transaction_uuid', transaction)
-            return db.reports(query=query).next()
-        except Exception as e:
-            raise rest_framework.exceptions.APIException('Can\'t get report from PuppetDB: %s' % e)
+        if not hasattr(self, 'report') or not self.report:
+            try:
+                db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
+                query = pypuppetdb.QueryBuilder.EqualsOperator('transaction_uuid', transaction)
+                self.report = db.reports(query=query).next()
+            except Exception as e:
+                raise rest_framework.exceptions.APIException('Can\'t get report from PuppetDB: %s' % e)
+
+        return self.report
 
     # Method fields
     def get_logs(self, obj):
@@ -94,13 +97,16 @@ class NodeSerializer_Light(serializers.ModelSerializer):
         read_only_fields = ('status', 'report_timestamp', 'catalog_timestamp', 'facts_timestamp')
 
     def get_node(self, name):
-        try:
-            db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
-            return db.node(name)
-        except Exception as e:
-            if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 404:
-                return []
-            raise rest_framework.exceptions.APIException('Can\'t get node from PuppetDB: %s' % e)
+        if not hasattr(self, 'node') or not self.node:
+            try:
+                db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
+                self.node = db.node(name)
+            except Exception as e:
+                if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 404:
+                    return []
+                raise rest_framework.exceptions.APIException('Can\'t get node from PuppetDB: %s' % e)
+
+        return self.node
 
     # Method fields
     def get_status(self, obj):
