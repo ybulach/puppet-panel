@@ -25,7 +25,14 @@ class GroupAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
     class GroupAdminForm(forms.ModelForm):
+        parents = forms.ModelMultipleChoiceField(required=False, widget=admin.widgets.FilteredSelectMultiple('Parent groups', is_stacked=False), queryset=models.Group.objects.all())
         classes = forms.ModelMultipleChoiceField(required=False, widget=admin.widgets.FilteredSelectMultiple('Classes', is_stacked=False), queryset=models.Class.objects.all())
+
+        def __init__(self, *args, **kwargs):
+            super(GroupAdmin.GroupAdminForm, self).__init__(*args, **kwargs)
+
+            # Exclude this group from the list
+            self.fields['parents'].queryset = self.fields['parents'].queryset.exclude(name=self.instance.name)
 
     form = GroupAdminForm
 

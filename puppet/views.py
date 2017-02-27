@@ -60,7 +60,7 @@ class NestedModelViewSet(viewsets.ModelViewSet):
         serializer.save(**new_kwargs)
 
 # A generic view set to be used by nested many to many relations between models (modify the links between the models)
-class ManyToManyNestedViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
+class ManyToManyNestedViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
     # Overwrite this attributes
     parent_kwargs = 'mymodel'
     parent_field = 'name'
@@ -81,15 +81,6 @@ class ManyToManyNestedViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin
 
         # Return result
         serializer = self.get_serializer(getattr(parent, self.nested_field), many=True)
-        return response.Response(serializer.data)
-
-    # Get one class
-    def retrieve(self, request, *args, **kwargs):
-        # Get the node/group
-        parent = self.get_parent()
-
-        # Return result
-        serializer = self.get_serializer(shortcuts.get_object_or_404(getattr(parent, self.nested_field), name=self.kwargs[self.lookup_field]))
         return response.Response(serializer.data)
 
     # Add a class
@@ -197,6 +188,19 @@ class GroupClassViewSet(ClassNestedViewSet):
     parent_kwargs = 'group'
     parent_field = 'pk'
     model_parent = models.Group
+
+class GroupGroupViewSet(ManyToManyNestedViewSet):
+    # Default attributes
+    serializer_class = serializers.GroupSerializer
+    lookup_field = 'name'
+    lookup_value_regex = validators.group_name_regex
+
+    # Nested object attributes
+    parent_kwargs = 'group'
+    parent_field = 'pk'
+    nested_field = 'parents'
+    model_parent = models.Group
+    model_nested = models.Group
 
 # Nodes
 class NodeViewSet(viewsets.ModelViewSet):

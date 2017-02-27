@@ -70,13 +70,14 @@ class GroupParameterSerializer(ValidatedSerializer):
         read_only_fields = ('encryption_key',)
 
 class GroupSerializer(serializers.ModelSerializer):
-    classes = ClassSerializer(many=True, read_only=True)
+    classes = serializers.StringRelatedField(many=True, read_only=True)
+    parents = serializers.StringRelatedField(many=True)
     parameters = GroupParameterSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Group
-        fields = ('name', 'classes', 'parameters')
-        read_only_fields = ('classes', 'parameters')
+        fields = ('name', 'parents', 'classes', 'parameters')
+        read_only_fields = ('parents', 'classes', 'parameters')
 
 # Nodes
 class NodeParameterSerializer(ValidatedSerializer):
@@ -126,8 +127,8 @@ class NodeSerializer_Light(serializers.ModelSerializer):
         return node.facts_timestamp
 
 class NodeSerializer_Full(NodeSerializer_Light):
-    classes = ClassSerializer(many=True, read_only=True)
-    groups = GroupSerializer(many=True, read_only=True)
+    classes = serializers.StringRelatedField(many=True)
+    groups = serializers.StringRelatedField(many=True)
     parameters = NodeParameterSerializer(many=True, read_only=True)
     reports = serializers.SerializerMethodField()
 

@@ -13,6 +13,7 @@ router.register(r'reports', views.ReportViewSet, base_name='reports')
 groups_router = routers.NestedSimpleRouter(router, r'groups', lookup='group', trailing_slash=False)
 groups_router.register(r'parameters', views.GroupParameterViewSet, base_name='group-parameters')
 groups_router.register(r'classes', views.GroupClassViewSet, base_name='group-classes')
+groups_router.register(r'groups', views.GroupGroupViewSet, base_name='group-groups')
 
 nodes_router = routers.NestedSimpleRouter(router, r'nodes', lookup='node', trailing_slash=False)
 nodes_router.register(r'parameters', views.NodeParameterViewSet, base_name='node-parameters')

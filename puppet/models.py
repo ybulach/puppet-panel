@@ -19,6 +19,7 @@ class Class(models.Model):
 
 class Group(models.Model):
     name = models.CharField(max_length=255, primary_key=True, validators=[validators.validate_group_name])
+    parents = models.ManyToManyField('Group', blank=True)
     classes = models.ManyToManyField(Class, blank=True)
 
     def __unicode__(self):
