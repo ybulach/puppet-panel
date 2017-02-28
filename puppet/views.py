@@ -168,6 +168,7 @@ class ReportViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 # Groups
 class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.GroupSerializer
+    lookup_field = 'name'
     lookup_value_regex = validators.group_name_regex
     queryset = models.Group.objects.all()
 
@@ -178,7 +179,7 @@ class GroupParameterViewSet(NestedModelViewSet):
 
     # Nested object attributes
     parent_kwargs_lookup = 'group'
-    parent_unique_field = 'pk'
+    parent_unique_field = 'name'
     nested_parent_field = 'group_id'
     nested_unique_field = 'name'
     model_parent = models.Group
@@ -186,7 +187,7 @@ class GroupParameterViewSet(NestedModelViewSet):
 
 class GroupClassViewSet(ClassNestedViewSet):
     parent_kwargs = 'group'
-    parent_field = 'pk'
+    parent_field = 'name'
     model_parent = models.Group
 
 class GroupGroupViewSet(ManyToManyNestedViewSet):
@@ -197,13 +198,14 @@ class GroupGroupViewSet(ManyToManyNestedViewSet):
 
     # Nested object attributes
     parent_kwargs = 'group'
-    parent_field = 'pk'
+    parent_field = 'name'
     nested_field = 'parents'
     model_parent = models.Group
     model_nested = models.Group
 
 # Nodes
 class NodeViewSet(viewsets.ModelViewSet):
+    lookup_field = 'name'
     lookup_value_regex = validators.node_name_regex
     queryset = models.Node.objects.all()
 
@@ -220,7 +222,7 @@ class NodeParameterViewSet(NestedModelViewSet):
 
     # Nested object attributes
     parent_kwargs_lookup = 'node'
-    parent_unique_field = 'pk'
+    parent_unique_field = 'name'
     nested_parent_field = 'node_id'
     nested_unique_field = 'name'
     model_parent = models.Node
@@ -228,7 +230,7 @@ class NodeParameterViewSet(NestedModelViewSet):
 
 class NodeClassViewSet(ClassNestedViewSet):
     parent_kwargs = 'node'
-    parent_field = 'pk'
+    parent_field = 'name'
     model_parent = models.Node
 
 class NodeGroupViewSet(ManyToManyNestedViewSet):
@@ -239,7 +241,7 @@ class NodeGroupViewSet(ManyToManyNestedViewSet):
 
     # Nested object attributes
     parent_kwargs = 'node'
-    parent_field = 'pk'
+    parent_field = 'name'
     nested_field = 'groups'
     model_parent = models.Node
     model_nested = models.Group

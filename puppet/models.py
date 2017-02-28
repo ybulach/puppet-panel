@@ -9,7 +9,7 @@ from django.db import models
 import validators
 
 class Class(models.Model):
-    name = models.CharField(max_length=255, primary_key=True, validators=[validators.validate_class_name])
+    name = models.CharField(max_length=255, unique=True, validators=[validators.validate_class_name])
 
     class Meta:
         verbose_name_plural = 'Classes'
@@ -18,7 +18,7 @@ class Class(models.Model):
         return "{0}".format(self.name, )
 
 class Group(models.Model):
-    name = models.CharField(max_length=255, primary_key=True, validators=[validators.validate_group_name])
+    name = models.CharField(max_length=255, unique=True, validators=[validators.validate_group_name])
     parents = models.ManyToManyField('Group', blank=True)
     classes = models.ManyToManyField(Class, blank=True)
 
@@ -26,7 +26,7 @@ class Group(models.Model):
         return "{0}".format(self.name, )
 
 class Node(models.Model):
-    name = models.CharField(max_length=255, primary_key=True, validators=[validators.validate_node_name])
+    name = models.CharField(max_length=255, unique=True, validators=[validators.validate_node_name])
     groups = models.ManyToManyField(Group, blank=True)
     classes = models.ManyToManyField(Class, blank=True)
 
