@@ -1,4 +1,4 @@
-from django import shortcuts
+from django import http, shortcuts
 from django.conf import settings
 import pypuppetdb
 from rest_framework import exceptions, mixins, response, status, viewsets
@@ -140,16 +140,6 @@ class ReportViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     lookup_field = 'transaction'
     lookup_value_regex = validators.report_uuid_regex
 
-    # Get the connection to PuppetDB API
-    def get_report(self, transaction):
-        try:
-            db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
-            return db.report(transaction)
-        except Exception as e:
-            if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 404:
-                return []
-            raise exceptions.APIException('Can\'t get report from PuppetDB: %s' % e)
-
     # Get one report
     def retrieve(self, request, *args, **kwargs):
         try:
@@ -157,8 +147,8 @@ class ReportViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             query = pypuppetdb.QueryBuilder.EqualsOperator('transaction_uuid', kwargs[self.lookup_field])
             report = db.reports(query=query).next()
         except Exception as e:
-            if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 404:
-                raise
+            if isinstance(e, StopIteration):
+                raise http.Http404()
             raise exceptions.APIException('Can\'t get report from PuppetDB: %s' % e)
 
         # Return result
