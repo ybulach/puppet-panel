@@ -19,6 +19,7 @@ nodes_router = routers.NestedSimpleRouter(router, r'nodes', lookup='node', trail
 nodes_router.register(r'parameters', views.NodeParameterViewSet, base_name='node-parameters')
 nodes_router.register(r'classes', views.NodeClassViewSet, base_name='node-classes')
 nodes_router.register(r'groups', views.NodeGroupViewSet, base_name='node-groups')
+nodes_router.register(r'enc', views.NodeEncViewSet, base_name='node-enc')
 
 # Resulting routes
 urlpatterns = [

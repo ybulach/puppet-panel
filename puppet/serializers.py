@@ -145,3 +145,10 @@ class NodeSerializer_Full(NodeSerializer_Light):
             'start': report.start,
             'end': report.end
         } for report in node.reports()] if node else []
+
+class NodeSerializer_Enc(serializers.Serializer):
+    classes = serializers.StringRelatedField(many=True)
+    parameters = NodeParameterSerializer(many=True)
+
+    class Meta:
+        fields = ('classes', 'parameters')

@@ -235,3 +235,58 @@ class NodeGroupViewSet(ManyToManyNestedViewSet):
     nested_field = 'groups'
     model_parent = models.Node
     model_nested = models.Group
+
+class NodeEncViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    serializer_class = serializers.NodeSerializer_Enc
+
+    # Iter a node/group (and his parents) and return classes and parameters
+    def iter_object(self, obj, past_objects):
+        classes = []
+        parameters = []
+
+        # Prevent infinite loop
+        if obj.name in past_objects:
+            return (classes, parameters, past_objects)
+        past_objects.append(obj.name)
+
+        # Local classes and parameters
+        for cls in obj.classes.all():
+            classes.append(cls)
+
+        for parameter in obj.parameters.all():
+            parameters.append(parameter)
+
+        # Parent objects
+        parents = obj.groups if hasattr(obj, 'groups') else obj.parents
+        for parent in parents.all():
+            parent_classes, parent_parameters, past_objects = self.iter_object(parent, past_objects)
+
+            # Current parent classes and parameters
+            for cls in parent_classes:
+                if not cls in classes:
+                    classes.append(cls)
+
+            for parameter in parent_parameters:
+                duplicate = False
+                for param in parameters:
+                    if param.name == parameter.name:
+                        duplicate = True
+                        break
+
+                if not duplicate:
+                    parameters.append(parameter)
+
+        # Return result
+        return (classes, parameters, past_objects)
+
+    # Get the ENC datas on a node (including recursive lookup of parameters/classes)
+    def list(self, request, *args, **kwargs):
+        # Get the node
+        node = shortcuts.get_object_or_404(models.Node.objects.all(), name=self.kwargs['node__name'])
+
+        # Iter the node and the groups
+        classes, parameters, past_objects = self.iter_object(node, [])
+
+        # Return result
+        serializer = self.get_serializer({'classes': classes, 'parameters': parameters})
+        return response.Response(serializer.data)
