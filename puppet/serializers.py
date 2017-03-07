@@ -43,15 +43,18 @@ class ReportSerializer(serializers.Serializer):
         fields = ('transaction', 'node', 'status', 'start', 'end', 'logs')
 
     def get_report(self, transaction):
-        if not hasattr(self, 'report') or not self.report:
+        if not hasattr(self, 'report'):
+            self.report = {}
+
+        if not transaction in self.report:
             try:
                 db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
                 query = pypuppetdb.QueryBuilder.EqualsOperator('transaction_uuid', transaction)
-                self.report = db.reports(query=query).next()
+                self.report[transaction] = db.reports(query=query).next()
             except Exception as e:
                 raise rest_framework.exceptions.APIException('Can\'t get report from PuppetDB: %s' % e)
 
-        return self.report
+        return self.report[transaction]
 
     # Method fields
     def get_logs(self, obj):
@@ -98,16 +101,19 @@ class NodeSerializer_Light(serializers.ModelSerializer):
         read_only_fields = ('status', 'report_timestamp', 'catalog_timestamp', 'facts_timestamp')
 
     def get_node(self, name):
-        if not hasattr(self, 'node') or not self.node:
+        if not hasattr(self, 'node'):
+            self.node = {}
+
+        if not name in self.node:
             try:
                 db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
-                self.node = db.node(name)
+                self.node[name] = db.nodes(path=name, with_status=True).next()
             except Exception as e:
                 if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 404:
                     return None
                 raise rest_framework.exceptions.APIException('Can\'t get node from PuppetDB: %s' % e)
 
-        return self.node
+        return self.node[name]
 
     # Method fields
     def get_status(self, obj):
