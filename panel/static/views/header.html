@@ -1,0 +1,22 @@
+<nav ng-controller="HeaderCtrl" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="container-fluid">
+  	<div class="navbar-header">
+  		<span class="navbar-brand">Puppet Panel</span>
+  	</div>
+    <ul class="nav navbar-nav navbar-right" ng-if='loggedIn()'>
+      <li ng-class="{active: isCurrent('/account')}"><a href="#/account"><span class="glyphicon glyphicon-user"></span> {{loggedUser()}}</a></li>
+      <li><a href="#/logout"><span class="glyphicon glyphicon-off"></span> Logout</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right" ng-if='!loggedIn()'>
+      <li ng-class="{active: isCurrent('/login')}"><a href="#/login"><span class="glyphicon glyphicon-user"></span> Login</a></li>
+    </ul>
+  	<ul class="nav navbar-nav">
+      <li ng-class="{active: isCurrent('/')}"><a href="#/"><span class="glyphicon glyphicon-dashboard"></span> Dashboard</a></li>
+      <li ng-class="{active: isCurrent('/nodes')}"><a href="#/nodes"><span class="glyphicon glyphicon-file"></span> Nodes</a></li>
+      <li ng-class="{active: isCurrent('/groups')}"><a href="#/groups"><span class="glyphicon glyphicon-duplicate"></span> Groups</a></li>
+      <li ng-class="{active: isCurrent('/classes')}"><a href="#/classes"><span class="glyphicon glyphicon-tags"></span> Classes</a></li>
+      <li ng-class="{active: isCurrent('/parameters')}"><a href="#/parameters"><span class="glyphicon glyphicon-book"></span> Parameters</a></li>
+      <li ng-class="{active: isCurrent('/reports')}"><a href="#/reports"><span class="glyphicon glyphicon-tasks"></span> Reports</a></li>
+  	</ul>
+  </div>
+</nav>

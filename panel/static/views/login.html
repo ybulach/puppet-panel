@@ -1,0 +1,43 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class="page-header">Login</h1>
+
+      <ol class="breadcrumb">
+        <li><a href="#/">Home</a></li>
+        <li class="active">Login</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div ng-if="error" class="alert alert-danger">{{error}}</div>
+
+          <form role="form" name="loginForm">
+            <div class="form-group">
+              <label for="username" class="required">Username</label>
+              <input type="text" class="form-control" ng-model="user.login" placeholder="Username (i.e. jdupont)" required>
+            </div>
+            <div class="form-group">
+              <label for="password" class="required">Password</label>
+              <input type="password" class="form-control" ng-model="user.password" placeholder="Password" required>
+            </div>
+            <button type="submit" class="btn btn-default" ng-click="submit()" ng-disabled="status === 'pending' || !loginForm.$valid">Login</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">Need help ?</div>
+        <div class="panel-body">
+          <!-- TODO -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

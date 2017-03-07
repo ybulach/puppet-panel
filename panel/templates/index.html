@@ -1,0 +1,31 @@
+{% load pipeline %}
+<!doctype html>
+<html ng-app="puppetPanel">
+  <head>
+    <meta charset="utf-8">
+    <title>Puppet Panel</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+
+    {% stylesheet "vendors" %}
+    {% stylesheet "app" %}
+  </head>
+  <body>
+    <div>
+      <div ng-include src="'static/views/header.html'"></div>
+
+      <div class="container" ng-view=""></div>
+
+      <div class="footer">
+        <div class="container text-muted">
+          <span class="glyphicon glyphicon-send"></span> Puppet Panel -
+          <a href="/doc">API</a></span> -
+          <a href="https://github.com/ybulach/puppet-panel">Github</a></span>
+        </div>
+      </div>
+    </div>
+
+    {% javascript "vendors" %}
+    {% javascript "app" %}
+  </body>
+</html>

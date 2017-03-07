@@ -5,3 +5,4 @@
 *.crt
 *.key
 settings_local.py
+bower_components/

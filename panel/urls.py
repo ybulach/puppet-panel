@@ -1,12 +1,38 @@
 from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
+import django_rest_apikey.views
+import djoser.views
+from rest_framework_nested import routers
 from rest_framework_swagger.views import get_swagger_view
 
+import views
+
+api_router = routers.SimpleRouter(trailing_slash=False)
+api_router.register(r'apikeys', django_rest_apikey.views.APIKeyViewSet, base_name='apikeys')
+
 urlpatterns = [
+	# REST API
+    url(r'^api/', include(api_router.urls)),
     url(r'^api/', include('puppet.urls')),
+
+    # API authentication (from Djoser, added here to remove trailing slashes)
+    url(r'^api/login$', djoser.views.LoginView.as_view(), name='login'),
+    url(r'^api/logout$', djoser.views.LogoutView.as_view(), name='logout'),
+    url(r'^api/account$', djoser.views.UserView.as_view(), name='user'),
+    #url(r'^api/register$', djoser.views.RegistrationView.as_view(), name='register'),
+    #url(r'^api/activate$', djoser.views.ActivationView.as_view(), name='activate'),
+    url(r'^api/password$', djoser.views.SetPasswordView.as_view(), name='set_password'),
+    #url(r'^api/password/reset$', djoser.views.PasswordResetView.as_view(), name='password_reset'),
+    #url(r'^api/password/reset/confirm$', djoser.views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+
+    # API documentation
     url(r'^doc/', get_swagger_view(title='Hosting Panel API')),
     url(r'^', include('rest_framework.urls', namespace='rest_framework')),
+
+    # Web interface
+    url(r'^config.json$', views.ConfigView.as_view(), name='config'),
+    url(r'^$', views.IndexView.as_view(), name='index'),
 ]
 
 # Admin is enabled in debug mode only

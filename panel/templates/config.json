@@ -1,0 +1,3 @@
+{
+	"url": "{{request.scheme}}://{{request.get_host}}/api"
+}

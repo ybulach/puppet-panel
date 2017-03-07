@@ -1,8 +1,10 @@
 Django
+django-pipeline
 djangorestframework
 django_rest_apikey
 django-rest-framework-nested
 django-rest-swagger
+djoser
 MySQL-python
 pycrypto
 pypuppetdb

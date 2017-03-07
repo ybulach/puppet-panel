@@ -26,8 +26,11 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_rest_apikey',
+    'djoser',
+    'pipeline',
     'puppet',
     'rest_framework',
+    'rest_framework.authtoken',
     'rest_framework_swagger',
 )
 
@@ -47,7 +50,9 @@ ROOT_URLCONF = 'panel.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR + '/panel/templates'
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -82,6 +87,62 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = BASE_DIR + '/static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR + '/panel/static/'
+]
+
+STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'pipeline.finders.PipelineFinder',
+)
+
+
+# Pipeline assets
+# https://django-pipeline.readthedocs.io/
+
+PIPELINE = {
+    'STYLESHEETS': {
+        'vendors': {
+            'source_filenames': (
+                'bower_components/bootstrap/dist/css/bootstrap.min.css',
+                'bower_components/angular-loading-bar/build/loading-bar.min.css',
+            ),
+            'output_filename': 'css/vendors.css'
+        },
+        'app': {
+            'source_filenames': (
+                'app.css',
+            ),
+            'output_filename': 'css/app.css'
+        }
+    },
+    'JAVASCRIPT': {
+        'vendors': {
+            'source_filenames': (
+                'bower_components/angular/angular.min.js',
+                'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
+                'bower_components/angular-loading-bar/build/loading-bar.min.js',
+                'bower_components/angular-local-storage/dist/angular-local-storage.min.js',
+                'bower_components/angular-route/angular-route.min.js',
+            ),
+            'output_filename': 'js/vendors.js'
+        },
+        'app': {
+            'source_filenames': (
+                'scripts/*.js',
+                'scripts/controllers/*.js',
+                'scripts/services/*.js',
+            ),
+            'output_filename': 'js/app.js'
+        }
+    }
+}
+
 
 # Authentication
 
@@ -93,6 +154,7 @@ LOGOUT_URL = 'rest_framework:logout'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
         'django_rest_apikey.authentication.APIKeyAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
@@ -113,11 +175,3 @@ SWAGGER_SETTINGS = {
     'DOC_EXPANSION': 'list',
     'VALIDATOR_URL': None
 }
-
-
-# Puppet DB
-# Default values
-
-PUPPETDB_HOST = 'localhost'
-
-PUPPETDB_PORT = '8080'
