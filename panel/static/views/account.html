@@ -1,8 +1,4 @@
-<div class="container-fluid" ng-if="!loaded">
-  Loading...
-</div>
-
-<div class="container-fluid" ng-if="loaded">
+<div class="container-fluid">
   <div class="row">
     <div class="col-lg-12">
       <h1 class="page-header">Account</h1>
@@ -16,7 +12,11 @@
 
   <div class="modal-parent"></div>
 
-  <div class="row">
+  <div class="row" ng-if="!loaded">
+    <div class="col-lg-12">Loading...</div>
+  </div>
+
+  <div class="row" ng-if="loaded">
     <div class="col-lg-8">
       <div class="panel panel-default">
         <div class="panel-body">
@@ -55,12 +55,12 @@
     </div>
   </div>
 
-  <div class="row">
+  <div class="row" ng-if="loaded">
     <div class="col-lg-12">
       <div ng-if="apikeys.error" class="alert alert-danger">{{apikeys.error}}</div>
       <div ng-if="apikeys.success" class="alert alert-success">{{apikeys.success}}</div>
 
-      <button type="button" class="btn btn-success pull-right" ng-click="apikeys.create()">Generate an API key</button>
+      <button type="button" class="btn btn-success pull-right" ng-click="apikeys.create()" ng-disabled="apikeys.status === 'pending'">Generate an API key</button>
       <div class="clearfix"></div>
 
       <div class="table-responsive">

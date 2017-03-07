@@ -32,6 +32,7 @@ angular.module('puppetPanel')
   $scope.$on('cfpLoadingBar:completed', function() {
     $scope.loaded = true;
     $scope.account.status = '';
+    $scope.apikeys.status = '';
   });
 
   // Common modal parent
