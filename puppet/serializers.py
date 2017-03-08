@@ -67,6 +67,8 @@ class ReportSerializer(serializers.Serializer):
 
 # Groups
 class GroupParameterSerializer(ValidatedSerializer):
+    encrypted = serializers.BooleanField(default=False)
+
     class Meta:
         model = models.GroupParameter
         fields = ('name', 'value', 'encryption_key', 'encrypted')
@@ -84,6 +86,8 @@ class GroupSerializer(serializers.ModelSerializer):
 
 # Nodes
 class NodeParameterSerializer(ValidatedSerializer):
+    encrypted = serializers.BooleanField(default=False)
+
     class Meta:
         model = models.NodeParameter
         fields = ('name', 'value', 'encryption_key', 'encrypted')

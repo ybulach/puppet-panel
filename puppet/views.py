@@ -200,7 +200,7 @@ class NodeViewSet(viewsets.ModelViewSet):
     queryset = models.Node.objects.all()
 
     def get_serializer_class(self):
-        if self.action in ['retrieve']:
+        if self.action in ['retrieve', 'create', 'update']:
             return serializers.NodeSerializer_Full
         else:
             return serializers.NodeSerializer_Light
