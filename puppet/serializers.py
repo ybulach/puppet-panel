@@ -72,7 +72,6 @@ class GroupParameterSerializer(ValidatedSerializer):
     class Meta:
         model = models.GroupParameter
         fields = ('name', 'value', 'encryption_key', 'encrypted')
-        read_only_fields = ('encryption_key',)
 
 class GroupSerializer(serializers.ModelSerializer):
     classes = serializers.SlugRelatedField(slug_field='name', queryset=models.Class.objects.all(), many=True)
@@ -91,7 +90,6 @@ class NodeParameterSerializer(ValidatedSerializer):
     class Meta:
         model = models.NodeParameter
         fields = ('name', 'value', 'encryption_key', 'encrypted')
-        read_only_fields = ('encryption_key',)
 
 class NodeSerializer_Light(serializers.ModelSerializer):
     status = serializers.SerializerMethodField()
