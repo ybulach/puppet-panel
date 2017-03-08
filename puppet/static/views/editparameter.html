@@ -1,0 +1,34 @@
+<form role="form" name="form">
+  <div class="modal-header">
+    <h3 class="modal-title" id="modal-title">Manage parameter</h3>
+  </div>
+  <div class="modal-body" id="modal-body">
+    <div uib-alert class="alert-danger" ng-if="error">{{error}}</div>
+
+    <div class="form-group" ng-class="{'has-error': form.name.error}">
+      <label for="name" class="required">Name</label>
+      <input type="text" class="form-control" placeholder="my_parameter" name="name" ng-model="parameter.name" required>
+      <span class="help-block" ng-if="form.name.error">{{form.name.error}}</span>
+    </div>
+
+    <div class="form-group" ng-class="{'has-error': form.value.error}">
+      <label for="value">Value</label>
+      <textarea class="form-control" name="value" ng-model="parameter.value"></textarea>
+      <span class="help-block" ng-if="form.value.error">{{form.value.error}}</span>
+    </div>
+
+    <div class="form-group" ng-class="{'has-error': form.encrypted.error}">
+      <label for="encrypted">
+        <input type="checkbox" name="encrypted" id="encrypted" ng-model="parameter.encrypted"> Use encryption
+      </label>
+      <span class="help-block" ng-if="form.encrypted.error">{{form.encrypted.error}}</span>
+    </div>
+
+    <input type="hidden" name="encryption_key" id="encryption_key" ng-model="parameter.encryption_key">
+      <span class="help-block" ng-if="form.encryption_key.error">{{form.encryption_key.error}}</span>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-success" type="submit" ng-click="ok()" ng-disabled="status === 'pending' || !form.$valid">OK</button>
+    <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+  </div>
+</form>

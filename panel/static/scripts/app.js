@@ -4,7 +4,9 @@ angular.module('puppetPanel', [
   'angular-loading-bar',
   'LocalStorageModule',
   'ngRoute',
-  'ui.bootstrap'
+  'ngTable',
+  'ui.bootstrap',
+  'ui.select'
 ])
 .config(['$locationProvider', '$httpProvider', '$routeProvider', 'cfpLoadingBarProvider', function($locationProvider, $httpProvider, $routeProvider, cfpLoadingBarProvider) {
   $locationProvider.hashPrefix('');

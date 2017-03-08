@@ -109,8 +109,10 @@ PIPELINE = {
     'STYLESHEETS': {
         'vendors': {
             'source_filenames': (
-                'bower_components/bootstrap/dist/css/bootstrap.min.css',
                 'bower_components/angular-loading-bar/build/loading-bar.min.css',
+                'bower_components/angular-ui-select/dist/select.min.css',
+                'bower_components/bootstrap/dist/css/bootstrap.min.css',
+                'bower_components/ng-table-bundle/ng-table.min.css',
             ),
             'output_filename': 'css/vendors.css'
         },
@@ -129,6 +131,8 @@ PIPELINE = {
                 'bower_components/angular-loading-bar/build/loading-bar.min.js',
                 'bower_components/angular-local-storage/dist/angular-local-storage.min.js',
                 'bower_components/angular-route/angular-route.min.js',
+                'bower_components/angular-ui-select/dist/select.min.js',
+                'bower_components/ng-table-bundle/ng-table.min.js',
             ),
             'output_filename': 'js/vendors.js'
         },

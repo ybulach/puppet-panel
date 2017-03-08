@@ -16,6 +16,21 @@ body {
   position: relative;
 }
 
+/* Align text a bit */
+.table > tbody > tr > td {
+  vertical-align: middle;
+}
+
+/* Hide long texts in tables */
+.table-nowrap {
+  table-layout:fixed;
+}
+.table-nowrap td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
