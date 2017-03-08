@@ -73,14 +73,14 @@ class GroupParameterSerializer(ValidatedSerializer):
         read_only_fields = ('encryption_key',)
 
 class GroupSerializer(serializers.ModelSerializer):
-    classes = serializers.StringRelatedField(many=True, read_only=True)
-    parents = serializers.StringRelatedField(many=True)
+    classes = serializers.SlugRelatedField(slug_field='name', queryset=models.Class.objects.all(), many=True)
+    parents = serializers.SlugRelatedField(slug_field='name', queryset=models.Group.objects.all(), many=True)
     parameters = GroupParameterSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Group
         fields = ('name', 'parents', 'classes', 'parameters')
-        read_only_fields = ('parents', 'classes', 'parameters')
+        read_only_fields = ('parameters',)
 
 # Nodes
 class NodeParameterSerializer(ValidatedSerializer):
@@ -133,14 +133,14 @@ class NodeSerializer_Light(serializers.ModelSerializer):
         return node.facts_timestamp if node else None
 
 class NodeSerializer_Full(NodeSerializer_Light):
-    classes = serializers.StringRelatedField(many=True)
-    groups = serializers.StringRelatedField(many=True)
+    classes = serializers.SlugRelatedField(slug_field='name', queryset=models.Class.objects.all(), many=True)
+    groups = serializers.SlugRelatedField(slug_field='name', queryset=models.Group.objects.all(), many=True)
     parameters = NodeParameterSerializer(many=True, read_only=True)
     reports = serializers.SerializerMethodField()
 
     class Meta(NodeSerializer_Light.Meta):
         fields = NodeSerializer_Light.Meta.fields + ('groups', 'classes', 'parameters', 'reports')
-        read_only_fields = NodeSerializer_Light.Meta.read_only_fields + ('groups', 'classes', 'parameters', 'reports')
+        read_only_fields = NodeSerializer_Light.Meta.read_only_fields + ('parameters', 'reports')
 
     # Method fields
     def get_reports(self, obj):
