@@ -6,11 +6,14 @@ angular.module('puppetPanel', [
   'ngRoute',
   'ui.bootstrap'
 ])
-.config(['$locationProvider', '$httpProvider', '$routeProvider', function($locationProvider, $httpProvider, $routeProvider) {
+.config(['$locationProvider', '$httpProvider', '$routeProvider', 'cfpLoadingBarProvider', function($locationProvider, $httpProvider, $routeProvider, cfpLoadingBarProvider) {
   $locationProvider.hashPrefix('');
 
   $httpProvider.defaults.xsrfCookieName = 'csrftoken';
   $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+  cfpLoadingBarProvider.includeSpinner = false;
+  cfpLoadingBarProvider.parentSelector = '#loading-bar-container';
 
   $routeProvider
     // Dashboard / default view
