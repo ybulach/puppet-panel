@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('puppetPanel')
-.controller('AccountCtrl', ['$scope', '$location', '$uibModal', '$http', '$document', '$filter', 'ApiService', function($scope, $location, $uibModal, $http, $document, $filter, ApiService) {
+.controller('AccountCtrl', ['$scope', '$location', '$uibModal', '$http', '$document', '$filter', 'ApiService', 'NgTableParams', function($scope, $location, $uibModal, $http, $document, $filter, ApiService, NgTableParams) {
   if(!ApiService.loggedIn()) {
   	$location.path('/login');
     return;
@@ -9,6 +9,7 @@ angular.module('puppetPanel')
 
   $scope.account = {error: '', success: '', status: ''};
   $scope.apikeys = {error: '', success: '', status: ''};
+  $scope.apikeys.table = new NgTableParams({sorting: {created_at: "asc"}}, {});
 
   // Get the account infos
   $http.get(ApiService.getConfig('url') + '/account')
@@ -19,11 +20,11 @@ angular.module('puppetPanel')
     $scope.account.error += 'Error while loading account informations.';
   });
 
-
   // Get the API keys
   $http.get(ApiService.getConfig('url') + '/apikeys')
   .then(function(result) {
     $scope.apikeys.data = result.data;
+    $scope.apikeys.table.settings({dataset: $scope.apikeys.data});
   }, function(reason) {
     $scope.apikeys.error = 'Error while loading API keys.';
   });
@@ -87,6 +88,7 @@ angular.module('puppetPanel')
     $http.post(ApiService.getConfig('url') + '/apikeys', {email: $scope.apikeys.data.email})
     .then(function(result) {
       $scope.apikeys.data.push(result.data);
+      $scope.apikeys.table.settings({dataset: $scope.apikeys.data});
       $scope.apikeys.success = 'New API key created successfully: ' + result.data.key;
     }, function(reason) {
       var error = ApiService.convertErrorsToForm(reason.data, $scope.apikeys.form);
@@ -113,6 +115,7 @@ angular.module('puppetPanel')
       var filtered = $filter('filter')($scope.apikeys.data, {'key': key});
       if(filtered.length)
         $scope.apikeys.data.splice($scope.apikeys.data.indexOf(filtered[0]), 1);
+      $scope.apikeys.table.settings({dataset: $scope.apikeys.data});
     });
   };
 }]);

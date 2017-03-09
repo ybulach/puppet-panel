@@ -17,7 +17,9 @@
   </div>
 
   <div class="row" ng-if="loaded">
-    <div class="col-lg-8">
+    <div class="col-lg-4">
+      <h2>Profile</h2>
+
       <div class="panel panel-default">
         <div class="panel-body">
           <div ng-if="account.error" class="alert alert-danger">{{account.error}}</div>
@@ -39,48 +41,30 @@
               <input type="password" class="form-control" name="new_password" ng-model="account.data.new_password">
               <span class="help-block" ng-if="account.form.new_password.error">{{account.form.new_password.error}}</span>
             </div>
-            <button type="submit" class="btn btn-default" ng-click="account.submit()" ng-disabled="account.status === 'pending' || !account.form.$valid">Save changes</button>
+            <button type="submit" class="btn btn-success" ng-click="account.submit()" ng-disabled="account.status === 'pending' || !account.form.$valid"><span class="glyphicon glyphicon-ok"></span> Save changes</button>
           </form>
         </div>
       </div>
     </div>
 
-    <div class="col-lg-4">
-      <div class="panel panel-default">
-        <div class="panel-heading">Need help ?</div>
-        <div class="panel-body">
-          <!-- TODO -->
-        </div>
-      </div>
-    </div>
-  </div>
+    <div class="col-lg-8">
+      <h2>API keys</h2>
 
-  <div class="row" ng-if="loaded">
-    <div class="col-lg-12">
       <div ng-if="apikeys.error" class="alert alert-danger">{{apikeys.error}}</div>
       <div ng-if="apikeys.success" class="alert alert-success">{{apikeys.success}}</div>
 
-      <button type="button" class="btn btn-success pull-right" ng-click="apikeys.create()" ng-disabled="apikeys.status === 'pending'">Generate an API key</button>
+      <button type="button" class="btn btn-success pull-right" ng-click="apikeys.create()" ng-disabled="apikeys.status === 'pending'"><span class="glyphicon glyphicon-plus"></span> Generate an API key</button>
       <div class="clearfix"></div>
 
       <div class="table-responsive">
-        <table class="table table-hover table-striped">
-          <thead>
-            <tr>
-              <th>Key</th>
-              <th>Created at</th>
-              <th></th>
-            </tr>
-          </thead>
+        <table class="table table-hover table-striped" ng-table="apikeys.table" show-filter="false">
           <tbody>
-            <tr ng-repeat="apikey in apikeys.data | orderBy: 'created_at'">
-              <td>{{apikey.key}}</td>
-              <td>{{apikey.created_at | date: 'medium'}}</td>
-              <td class="text-right">
-                <button type="button" class="btn btn-danger" ng-click="apikeys.delete(apikey.key)"><span class="glyphicon glyphicon-trash"></span></button>
-              </td>
+            <tr ng-repeat="apikey in $data">
+              <td title="'Key'" sortable="'key'">{{apikey.key}}</td>
+              <td title="'Created at'" sortable="'created_at'">{{apikey.created_at}}</td>
+              <td class="text-right"><button type="button" class="btn btn-danger" ng-click="apikeys.delete(apikey.key)"><span class="glyphicon glyphicon-trash"></span> Delete</button></td>
             </tr>
-            <tr ng-if="!apikeys.data.length">
+            <tr ng-if="!apikeys.table.data.length">
               <td colspan="3">No API key. Add one to see it here !</td>
             </tr>
           </tbody>
