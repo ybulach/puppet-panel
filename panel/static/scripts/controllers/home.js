@@ -13,11 +13,12 @@ angular.module('puppetPanel')
   $http.get(ApiService.getConfig('url') + '/nodes')
   .then(function(result) {
     $scope.nodes.total = result.data.length;
-    $scope.nodes.data.unchanged = $filter('filter')(result.data, {'status': 'unchanged'});
-    $scope.nodes.data.changed = $filter('filter')(result.data, {'status': 'changed'});
-    $scope.nodes.data.failed = $filter('filter')(result.data, {'status': 'failed'});
-    $scope.nodes.data.unreported = $filter('filter')(result.data, {'status': 'unreported'});
-    $scope.nodes.data.unknown = $filter('filter')(result.data, {'status': null});
+    console.log($scope.nodes.data);
+    $scope.nodes.data.unchanged = $filter('filter')(result.data, {'status': 'unchanged'}, true);
+    $scope.nodes.data.changed = $filter('filter')(result.data, {'status': 'changed'}, true);
+    $scope.nodes.data.failed = $filter('filter')(result.data, {'status': 'failed'}, true);
+    $scope.nodes.data.unreported = $filter('filter')(result.data, {'status': 'unreported'}, true);
+    $scope.nodes.data.unknown = $filter('filter')(result.data, {'status': null}, true);
   }, function(reason) {
     $scope.nodes.error = 'Error while loading nodes informations.';
   });

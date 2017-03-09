@@ -95,7 +95,7 @@ angular.module('puppetPanel')
       }
       // Edit parameter
       else {
-        var filtered = $filter('filter')($scope.node.data.parameters, {'name': parameter.name});
+        var filtered = $filter('filter')($scope.node.data.parameters, {'name': parameter.name}, true);
         if(filtered.length)
           angular.copy(result, $scope.node.data.parameters[$scope.node.data.parameters.indexOf(filtered[0])]);
       }
@@ -117,7 +117,7 @@ angular.module('puppetPanel')
     });
 
     modalInstance.result.then(function() {
-      var filtered = $filter('filter')($scope.node.data.parameters, {'name': parameter.name});
+      var filtered = $filter('filter')($scope.node.data.parameters, {'name': parameter.name}, true);
       if(filtered.length) {
         $scope.node.data.parameters.splice($scope.node.data.parameters.indexOf(filtered[0]), 1);
         $scope.parameters.settings({dataset: $scope.node.data.parameters});

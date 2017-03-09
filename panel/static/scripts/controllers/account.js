@@ -112,7 +112,7 @@ angular.module('puppetPanel')
     });
 
     modalInstance.result.then(function() {
-      var filtered = $filter('filter')($scope.apikeys.data, {'key': key});
+      var filtered = $filter('filter')($scope.apikeys.data, {'key': key}, true);
       if(filtered.length)
         $scope.apikeys.data.splice($scope.apikeys.data.indexOf(filtered[0]), 1);
       $scope.apikeys.table.settings({dataset: $scope.apikeys.data});

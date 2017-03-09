@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('puppetPanel')
-.controller('ReportCtrl', ['$scope', '$location', '$uibModal', '$http', '$document', '$filter', '$routeParams', 'ApiService', function($scope, $location, $uibModal, $http, $document, $filter, $routeParams, ApiService) {
+.controller('ReportCtrl', ['$scope', '$location', '$uibModal', '$http', '$document', '$routeParams', 'ApiService', function($scope, $location, $uibModal, $http, $document, $routeParams, ApiService) {
   if(!ApiService.loggedIn()) {
   	$location.path('/login');
     return;
