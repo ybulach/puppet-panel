@@ -1,0 +1,117 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class="page-header">Dashboard</h1>
+
+      <ol class="breadcrumb">
+        <li><a href="#/">Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="modal-parent"></div>
+
+  <div class="row" ng-if="!loaded">
+    <div class="col-lg-12">Loading...</div>
+  </div>
+
+  <div class="row" ng-if="nodes.error">
+  </div>
+
+  <div class="row" ng-if="loaded">
+    <div class="col-lg-12">
+      <div class="alert alert-danger" ng-if="nodes.error">{{nodes.error}}</div>
+    </div>
+
+    <div class="col-lg-2">
+      <div class="panel panel-green">
+        <div class="panel-heading">
+          <div class="huge text-right">{{nodes.data.unchanged.length}}</div>
+        </div>
+        <a href="#/nodes">
+          <div class="panel-footer">
+            <span class="pull-left">Unchanged</span>
+            <span class="pull-right"><i class="glyphicon glyphicon-chevron-right"></i></span>
+            <div class="clearfix"></div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="col-lg-2">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <div class="huge text-right">{{nodes.data.changed.length}}</div>
+        </div>
+        <a href="#/nodes">
+          <div class="panel-footer">
+            <span class="pull-left">Changed</span>
+            <span class="pull-right"><i class="glyphicon glyphicon-chevron-right"></i></span>
+            <div class="clearfix"></div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="col-lg-2">
+      <div class="panel panel-red">
+        <div class="panel-heading">
+          <div class="huge text-right">{{nodes.data.failed.length}}</div>
+        </div>
+        <a href="#/nodes">
+          <div class="panel-footer">
+            <span class="pull-left">Failed</span>
+            <span class="pull-right"><i class="glyphicon glyphicon-chevron-right"></i></span>
+            <div class="clearfix"></div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="col-lg-2">
+      <div class="panel panel-yellow">
+        <div class="panel-heading">
+          <div class="huge text-right">{{nodes.data.unreported.length}}</div>
+        </div>
+        <a href="#/nodes">
+          <div class="panel-footer">
+            <span class="pull-left">Unreported</span>
+            <span class="pull-right"><i class="glyphicon glyphicon-chevron-right"></i></span>
+            <div class="clearfix"></div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="col-lg-2">
+      <div class="panel panel-grey">
+        <div class="panel-heading">
+          <div class="huge text-right">{{nodes.data.unknown.length}}</div>
+        </div>
+        <a href="#/nodes">
+          <div class="panel-footer">
+            <span class="pull-left">Unknown</span>
+            <span class="pull-right"><i class="glyphicon glyphicon-chevron-right"></i></span>
+            <div class="clearfix"></div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="col-lg-2">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <div class="huge text-right">{{nodes.total}}</div>
+        </div>
+        <a href="#/nodes">
+          <div class="panel-footer">
+            <span class="pull-left">Total</span>
+            <span class="pull-right"><i class="glyphicon glyphicon-chevron-right"></i></span>
+            <div class="clearfix"></div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
