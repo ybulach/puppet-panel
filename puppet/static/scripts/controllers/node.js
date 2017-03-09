@@ -25,7 +25,6 @@ angular.module('puppetPanel')
     $scope.parameters.settings({dataset: $scope.node.data.parameters});
     $scope.reports.settings({dataset: $scope.node.data.reports});
   }, function(reason) {
-    console.log(reason);
     $scope.node.error = 'Error while loading node informations: ' + reason.statusText;
   });
 

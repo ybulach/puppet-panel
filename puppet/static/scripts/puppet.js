@@ -11,5 +11,11 @@ angular.module('puppetPanel')
     .when('/nodes/:name', {
       templateUrl: 'static/views/node.html',
       controller: 'NodeCtrl'
+    })
+
+    // Reports
+    .when('/reports/:transaction', {
+      templateUrl: 'static/views/report.html',
+      controller: 'ReportCtrl'
     });
 }]);

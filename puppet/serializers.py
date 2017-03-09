@@ -34,36 +34,33 @@ class ClassSerializer(serializers.ModelSerializer):
 class ReportSerializer(serializers.Serializer):
     transaction = serializers.CharField(allow_blank=False, trim_whitespace=False, required=True)
     node = serializers.CharField(allow_blank=False, trim_whitespace=False, required=True)
+    agent_version = serializers.CharField(allow_blank=False, trim_whitespace=False, required=True)
     status = serializers.CharField(allow_blank=False, trim_whitespace=False, required=True)
     start = serializers.DateTimeField(required=True)
     end = serializers.DateTimeField(required=True)
+    run_time = serializers.SerializerMethodField()
     logs = serializers.SerializerMethodField()
-
-    class Meta:
-        fields = ('transaction', 'node', 'status', 'start', 'end', 'logs')
-
-    def get_report(self, transaction):
-        if not hasattr(self, 'report'):
-            self.report = {}
-
-        if not transaction in self.report:
-            try:
-                db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
-                query = pypuppetdb.QueryBuilder.EqualsOperator('transaction_uuid', transaction)
-                self.report[transaction] = db.reports(query=query).next()
-            except Exception as e:
-                raise rest_framework.exceptions.APIException('Can\'t get report from PuppetDB: %s' % e)
-
-        return self.report[transaction]
+    events = serializers.SerializerMethodField()
 
     # Method fields
+    def get_run_time(self, obj):
+        return obj.run_time.total_seconds()
+
     def get_logs(self, obj):
-        report = self.get_report(obj.transaction)
         return [{
+            'source': log['source'],
             'level': log['level'],
             'time': log['time'],
-            'message': log['message']
-        } for log in report.logs]
+            'message': log['message'],
+            'file': '%s:%s' % (log['file'], log['line']) if log['file'] and log['line'] else ''
+        } for log in obj.logs]
+
+    def get_events(self, obj):
+        return [{
+           'resource': '%s[%s]' % (event.item['type'], event.item['title']),
+           'message': event.item['message'],
+           'status': event.status
+        } for event in obj.events()]
 
 # Groups
 class GroupParameterSerializer(ValidatedSerializer):
@@ -157,6 +154,3 @@ class NodeSerializer_Full(NodeSerializer_Light):
 class NodeSerializer_Enc(serializers.Serializer):
     classes = serializers.StringRelatedField(many=True)
     parameters = NodeParameterSerializer(many=True)
-
-    class Meta:
-        fields = ('classes', 'parameters')

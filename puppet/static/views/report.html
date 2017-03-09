@@ -1,0 +1,117 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class="page-header">Report <small>{{transaction}}</small></h1>
+
+      <ol class="breadcrumb">
+        <li><a href="#/">Home</a></li>
+        <li><a href="#/reports">Reports</a></li>
+        <li class="active">{{transaction}}</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="modal-parent"></div>
+
+  <div class="row" ng-if="!loaded">
+    <div class="col-lg-12">Loading...</div>
+  </div>
+
+  <div class="row" ng-if="report.error">
+    <div class="col-lg-12">
+      <div class="alert alert-danger">{{report.error}}</div>
+    </div>
+  </div>
+
+  <div class="row" ng-if="loaded && !report.error">
+    <div class="col-lg-4">
+      <h2>Summary</h2>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <div class="pull-right">
+            <span class="label label-success" ng-if="report.data.status == 'unchanged'">Success</span>
+            <span class="label label-danger" ng-if="report.data.status == 'failed'">Failed</span>
+            <span class="label label-info" ng-if="report.data.status == 'changed'">Changed</span>
+            <span class="label label-warning" ng-if="report.data.status == 'unreported'">Unreported</span>
+            <span class="label label-default" ng-if="!report.data.status">Unknown</span>
+          </div>
+
+           Status
+        </div>
+        <div class="panel-body">
+          <p>
+            <small><em>Node</em></small><br>
+            <a ng-href="#/nodes/{{report.data.node}}">{{report.data.node}}</a>
+          </p>
+          <p>
+            <small><em>Agent version</em></small><br>
+            <span>{{report.data.agent_version}}</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">Execution</div>
+        <div class="panel-body">
+          <p>
+            <small><em>Started at</em></small><br>
+            <span>{{report.data.start | date: 'medium'}}</span>
+          </p>
+          <p>
+            <small><em>Ended at</em></small><br>
+            <span>{{report.data.end | date: 'medium'}}</span>
+          </p>
+          <p>
+            <small><em>Run time</em></small><br>
+            <span>{{report.data.run_time || '0'}} seconds</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <h2>Events</h2>
+      <div class="list-group">
+        <div ng-repeat="event in report.data.events | orderBy: 'time'" class="list-group-item">
+          <div class="list-group-item-header">
+            <span class="label label-success" ng-if="event.status == 'success'">Success</span>
+            <span class="label label-danger" ng-if="event.status == 'failure'">Error</span>
+            <span class="label label-default" ng-if="!['success', 'failure'].includes(event.status)">Unknown</span>
+            {{event.resource}}
+          </div>
+          <div class="list-group-item-text">
+            <p><pre>{{event.message}}</pre></p>
+          </div>
+        </div>
+        <div class="list-group-item" ng-if="!report.data.events.length">
+          <p class="list-group-item-text">No event.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" ng-if="loaded && !report.error">
+    <div class="col-lg-12">
+      <h2>Logs</h2>
+
+      <div class="list-group">
+        <div ng-repeat="log in report.data.logs | orderBy: 'time'" class="list-group-item">
+          <div class="list-group-item-header">
+            <small class="pull-right">{{log.time | date: 'medium'}}</small>
+            <span class="label label-info" ng-if="log.level == 'info'">Info</span>
+            <span class="label label-danger" ng-if="log.level == 'err'">Error</span>
+            <span class="label label-warning" ng-if="log.level == 'warning'">Warning</span>
+            <span class="label label-success" ng-if="log.level == 'notice' || !log.level">Notice</span>
+            {{log.source}}
+          </div>
+          <div class="list-group-item-text">
+            <p><pre><small ng-if="log.file" class="pull-right label label-default">{{log.file}}</small>{{log.message}}</pre></p>
+          </div>
+        </div>
+        <div class="list-group-item" ng-if="!report.data.logs.length">
+          <p class="list-group-item-text">No log found.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
