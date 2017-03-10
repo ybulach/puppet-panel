@@ -1,0 +1,80 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class="page-header">
+        <div class="pull-right">
+          <button type="button" class="btn btn-default" ng-click="group.edit()"><span class="glyphicon glyphicon-pencil"></span> Edit group</button>
+          <button type="button" class="btn btn-danger" ng-click="group.delete()"><span class="glyphicon glyphicon-trash"></span> Delete group</button>
+        </div>
+
+        Group <small>{{name}}</small>
+      </h1>
+
+      <ol class="breadcrumb">
+        <li><a href="#/">Home</a></li>
+        <li><a href="#/groups">Groups</a></li>
+        <li class="active">{{name}}</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="modal-parent"></div>
+
+  <div class="row" ng-if="!loaded">
+    <div class="col-lg-12">Loading...</div>
+  </div>
+
+  <div class="row" ng-if="group.error">
+    <div class="col-lg-12">
+      <div class="alert alert-danger">{{group.error}}</div>
+    </div>
+  </div>
+
+  <div class="row" ng-if="loaded && !group.error">
+    <div class="col-lg-4">
+      <h2>Summary</h2>
+      <div class="panel panel-default">
+        <div class="panel-heading">Classes</div>
+        <div class="panel-body">
+          <span ng-repeat="class in group.data.classes"><a class="label label-default" ng-href="#/classes/{{class}}">{{class}}</a> </span>
+          <span ng-if="!group.data.classes.length">None</span>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">Parents</div>
+        <div class="panel-body">
+          <span ng-repeat="group in group.data.parents"><a class="label label-default" ng-href="#/groups/{{group}}">{{group}}</a> </span>
+          <span ng-if="!group.data.parents.length">None</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <h2>Parameters</h2>
+      <button type="button" class="btn btn-success pull-right" ng-click="parameters.edit(undefined)"><span class="glyphicon glyphicon-plus"></span> Add parameter</button>
+      <div class="clearfix"></div>
+
+      <div class="table-responsive">
+        <table class="table table-hover table-striped table-nowrap" ng-table="parameters" show-filter="false">
+          <tbody>
+            <tr ng-repeat="parameter in $data">
+              <td title="'Name'" sortable="'name'">{{parameter.name}}</td>
+              <td title="'Value'" sortable="'value'">
+                <span class="glyphicon glyphicon-lock" ng-if="parameter.encrypted"> Encrypted</span>
+                <span ng-if="!parameter.encrypted">{{parameter.value}}</span>
+              </td>
+              <td class="text-right">
+                <button type="button" class="btn btn-default" ng-click="parameters.edit(parameter)"><span class="glyphicon glyphicon-pencil"></span> Edit</button>
+                <button type="button" class="btn btn-danger" ng-click="parameters.delete(parameter)"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+              </td>
+            </tr>
+            <tr ng-if="!parameters.data.length">
+              <td colspan="3">No parameter found.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,40 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class="page-header">Groups</h1>
+
+      <ol class="breadcrumb">
+        <li><a href="#/">Home</a></li>
+        <li class="active">Groups</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="modal-parent"></div>
+
+  <div class="row" ng-if="!loaded">
+    <div class="col-lg-12">Loading...</div>
+  </div>
+
+  <div class="row" ng-if="loaded">
+    <div class="col-lg-12">
+      <div ng-if="groups.error" class="alert alert-danger">{{groups.error}}</div>
+
+      <button type="button" class="btn btn-success pull-right" ng-click="groups.create()"><span class="glyphicon glyphicon-plus"></span> Create a group</button>
+      <div class="clearfix"></div>
+
+      <div class="table-responsive">
+        <table class="table table-hover table-striped" ng-table="groups.table" show-filter="false">
+          <tbody>
+            <tr ng-repeat="group in $data">
+              <td title="'Name'" sortable="'name'"><a ng-href="#/groups/{{group.name}}">{{group.name}}</a></td>
+            </tr>
+            <tr ng-if="!groups.table.data.length">
+              <td>No group. Add one to see it here !</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

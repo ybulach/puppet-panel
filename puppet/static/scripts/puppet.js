@@ -13,6 +13,16 @@ angular.module('puppetPanel')
       controller: 'NodeCtrl'
     })
 
+    // Groups
+    .when('/groups', {
+      templateUrl: 'static/views/groups.html',
+      controller: 'GroupsCtrl'
+    })
+    .when('/groups/:name', {
+      templateUrl: 'static/views/group.html',
+      controller: 'GroupCtrl'
+    })
+
     // Reports
     .when('/reports/:transaction', {
       templateUrl: 'static/views/report.html',
