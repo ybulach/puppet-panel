@@ -118,3 +118,8 @@ body {
 .panel-grey > a:hover {
     color: #7a7a7a;
 }
+
+/* Custom progressbar colors */
+.progress-bar-gray {
+    background-color: #9b9b9b;
+}

@@ -13,7 +13,6 @@ angular.module('puppetPanel')
   $http.get(ApiService.getConfig('url') + '/nodes')
   .then(function(result) {
     $scope.nodes.total = result.data.length;
-    console.log($scope.nodes.data);
     $scope.nodes.data.unchanged = $filter('filter')(result.data, {'status': 'unchanged'}, true);
     $scope.nodes.data.changed = $filter('filter')(result.data, {'status': 'changed'}, true);
     $scope.nodes.data.failed = $filter('filter')(result.data, {'status': 'failed'}, true);

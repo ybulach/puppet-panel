@@ -21,6 +21,7 @@
 
   <div class="row" ng-if="loaded">
     <div class="col-lg-12">
+      <h2>Nodes status</h2>
       <div class="alert alert-danger" ng-if="nodes.error">{{nodes.error}}</div>
     </div>
 
@@ -112,6 +113,16 @@
           </div>
         </a>
       </div>
+    </div>
+
+    <div class="col-lg-12">
+      <uib-progress>
+        <uib-bar type="success" value="nodes.data.unchanged.length/nodes.total*100">Unchanged</uib-bar>
+        <uib-bar type="info" value="nodes.data.changed.length/nodes.total*100">Changed</uib-bar>
+        <uib-bar type="danger" value="nodes.data.failed.length/nodes.total*100">Failed</uib-bar>
+        <uib-bar type="warning" value="nodes.data.unreported.length/nodes.total*100">Unreported</uib-bar>
+        <uib-bar type="gray" value="nodes.data.unknown.length/nodes.total*100">Unknown</uib-bar>
+      </uib-progress>
     </div>
   </div>
 </div>
