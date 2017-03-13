@@ -116,6 +116,7 @@ class ManyToManyNestedViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mi
 # Classes
 class ClassViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ClassSerializer
+    lookup_field = 'name'
     lookup_value_regex = validators.class_name_regex
     queryset = models.Class.objects.all()
 

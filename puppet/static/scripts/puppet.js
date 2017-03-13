@@ -23,6 +23,16 @@ angular.module('puppetPanel')
       controller: 'GroupCtrl'
     })
 
+    // Classes
+    .when('/classes', {
+      templateUrl: 'static/views/classes.html',
+      controller: 'ClassesCtrl'
+    })
+    .when('/classes/:name', {
+      templateUrl: 'static/views/class.html',
+      controller: 'ClassCtrl'
+    })
+
     // Reports
     .when('/reports/:transaction', {
       templateUrl: 'static/views/report.html',

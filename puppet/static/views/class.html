@@ -1,0 +1,39 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class="page-header">
+        <div class="pull-right">
+          <button type="button" class="btn btn-default" ng-click="class.edit()"><span class="glyphicon glyphicon-pencil"></span> Edit class</button>
+          <button type="button" class="btn btn-danger" ng-click="class.delete()"><span class="glyphicon glyphicon-trash"></span> Delete class</button>
+        </div>
+
+        Class <small>{{name}}</small>
+      </h1>
+
+      <ol class="breadcrumb">
+        <li><a href="#/">Home</a></li>
+        <li><a href="#/classes">Classes</a></li>
+        <li class="active">{{name}}</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="modal-parent"></div>
+
+  <div class="row" ng-if="!loaded">
+    <div class="col-lg-12">Loading...</div>
+  </div>
+
+  <div class="row" ng-if="class.error">
+    <div class="col-lg-12">
+      <div class="alert alert-danger">{{class.error}}</div>
+    </div>
+  </div>
+
+  <div class="row" ng-if="loaded && !class.error">
+    <div class="col-lg-12">
+      <h2>No additional information</h2>
+      <p>Use buttons above to edit/delete this class</p>
+    </div>
+  </div>
+</div>
