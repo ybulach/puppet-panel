@@ -7,8 +7,12 @@ angular.module('puppetPanel')
     return;
   }
 
-  ApiService.logout().then(function() {
+  $scope.error = '';
+
+  ApiService.logout()
+  .then(function(result) {
     $location.path('/login');
-    return;
+  }, function(reason) {
+      $scope.error = 'An error occurred while logging out: ' + reason.statusText;
   });
 }]);
