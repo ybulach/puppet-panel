@@ -76,10 +76,11 @@
           <div class="list-group-item-header">
             <span class="label label-success" ng-if="event.status == 'success'">Success</span>
             <span class="label label-danger" ng-if="event.status == 'failure'">Error</span>
-            <span class="label label-default" ng-if="!['success', 'failure'].includes(event.status)">Unknown</span>
+            <span class="label label-warning" ng-if="event.status == 'skipped'">Skipped</span>
+            <span class="label label-default" ng-if="!['success', 'failure', 'skipped'].includes(event.status)">Unknown</span>
             {{event.resource}}
           </div>
-          <div class="list-group-item-text">
+          <div class="list-group-item-text" ng-if="event.message">
             <p><pre>{{event.message}}</pre></p>
           </div>
         </div>
