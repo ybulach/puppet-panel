@@ -71,8 +71,8 @@ class GroupParameterSerializer(ValidatedSerializer):
         fields = ('name', 'value', 'encryption_key', 'encrypted')
 
 class GroupSerializer(serializers.ModelSerializer):
-    classes = serializers.SlugRelatedField(slug_field='name', queryset=models.Class.objects.all(), many=True)
-    parents = serializers.SlugRelatedField(slug_field='name', queryset=models.Group.objects.all(), many=True)
+    classes = serializers.SlugRelatedField(slug_field='name', queryset=models.Class.objects.all(), many=True, required=False)
+    parents = serializers.SlugRelatedField(slug_field='name', queryset=models.Group.objects.all(), many=True, required=False)
     parameters = GroupParameterSerializer(many=True, read_only=True)
 
     class Meta:
@@ -132,8 +132,8 @@ class NodeSerializer_Light(serializers.ModelSerializer):
         return node.facts_timestamp if node else None
 
 class NodeSerializer_Full(NodeSerializer_Light):
-    classes = serializers.SlugRelatedField(slug_field='name', queryset=models.Class.objects.all(), many=True)
-    groups = serializers.SlugRelatedField(slug_field='name', queryset=models.Group.objects.all(), many=True)
+    classes = serializers.SlugRelatedField(slug_field='name', queryset=models.Class.objects.all(), many=True, required=False)
+    groups = serializers.SlugRelatedField(slug_field='name', queryset=models.Group.objects.all(), many=True, required=False)
     parameters = NodeParameterSerializer(many=True, read_only=True)
     reports = serializers.SerializerMethodField()
 
