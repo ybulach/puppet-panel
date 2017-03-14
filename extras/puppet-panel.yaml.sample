@@ -1,0 +1,6 @@
+---
+:url: http://puppet-panel.domain.tld
+:ssl_ca:
+:authorization: Api-Key f85b4623e4035cad48f134fda27293fc7871d058
+:private_key: puppet.key.pem
+:timeout: 10
