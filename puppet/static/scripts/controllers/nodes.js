@@ -7,8 +7,10 @@ angular.module('puppetPanel')
     return;
   }
 
-  $scope.nodes = {error: '', data: []};
+  $scope.nodes = {error: '', lastrefresh: null, data: []};
   $scope.nodes.table = new NgTableParams({sorting: {name: "asc"}}, {});
+
+  $scope.orphans = {error: 'Not yet implemented', lastrefresh: null, data: []};
 
   // Get the nodes
   var refresh = function() {
@@ -20,6 +22,7 @@ angular.module('puppetPanel')
       $scope.nodes.data = result.data;
       $scope.nodes.table.settings({dataset: $scope.nodes.data});
       $scope.nodes.table.page(page);
+      $scope.nodes.lastrefresh = Date.now();
     }, function(reason) {
       $scope.nodes.error = 'Error while loading nodes informations.';
     });
