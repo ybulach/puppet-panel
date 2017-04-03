@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from django import http, shortcuts
 from django.conf import settings
 import pypuppetdb
@@ -140,6 +141,21 @@ class ReportViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     serializer_class = serializers.ReportSerializer
     lookup_field = 'transaction'
     lookup_value_regex = validators.report_uuid_regex
+
+    # List reports of the last hour
+    def list(self, request, *args, **kwargs):
+        try:
+            db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
+            query = pypuppetdb.QueryBuilder.GreaterEqualOperator('start_time', (datetime.today() - timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S"))
+            reports = db.reports(query=query)
+        except Exception as e:
+            if isinstance(e, StopIteration):
+                raise http.Http404()
+            raise exceptions.APIException('Can\'t get latest reports from PuppetDB: %s' % e)
+
+        # Return result
+        serializer = self.get_serializer(reports, many=True)
+        return response.Response(serializer.data)
 
     # Get one report
     def retrieve(self, request, *args, **kwargs):
