@@ -137,8 +137,7 @@ class ClassNestedViewSet(ManyToManyNestedViewSet):
     model_nested = models.Class
 
 # Reports
-class ReportViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-    serializer_class = serializers.ReportSerializer
+class ReportViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     lookup_field = 'transaction'
     lookup_value_regex = validators.report_uuid_regex
 
@@ -154,7 +153,7 @@ class ReportViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             raise exceptions.APIException('Can\'t get latest reports from PuppetDB: %s' % e)
 
         # Return result
-        serializer = self.get_serializer(reports, many=True)
+        serializer = serializers.ReportSerializer_Light(reports, many=True)
         return response.Response(serializer.data)
 
     # Get one report
@@ -169,7 +168,7 @@ class ReportViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
             raise exceptions.APIException('Can\'t get report from PuppetDB: %s' % e)
 
         # Return result
-        serializer = self.get_serializer(report)
+        serializer = serializers.ReportSerializer_Full(report)
         return response.Response(serializer.data)
 
 # Groups

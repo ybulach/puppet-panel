@@ -31,7 +31,7 @@ class ClassSerializer(serializers.ModelSerializer):
         fields = ('name', )
 
 # Reports
-class ReportSerializer(serializers.Serializer):
+class ReportSerializer_Light(serializers.Serializer):
     transaction = serializers.CharField(allow_blank=False, trim_whitespace=False, required=True)
     node = serializers.CharField(allow_blank=False, trim_whitespace=False, required=True)
     agent_version = serializers.CharField(allow_blank=False, trim_whitespace=False, required=True)
@@ -39,13 +39,16 @@ class ReportSerializer(serializers.Serializer):
     start = serializers.DateTimeField(required=True)
     end = serializers.DateTimeField(required=True)
     run_time = serializers.SerializerMethodField()
-    logs = serializers.SerializerMethodField()
-    events = serializers.SerializerMethodField()
 
     # Method fields
     def get_run_time(self, obj):
         return obj.run_time.total_seconds()
 
+class ReportSerializer_Full(ReportSerializer_Light):
+    logs = serializers.SerializerMethodField()
+    events = serializers.SerializerMethodField()
+
+    # Method fields
     def get_logs(self, obj):
         return [{
             'source': log['source'],
@@ -144,12 +147,7 @@ class NodeSerializer_Full(NodeSerializer_Light):
     # Method fields
     def get_reports(self, obj):
         node = self.get_node(obj.name)
-        return [{
-            'transaction': report.transaction,
-            'status': report.status,
-            'start': report.start,
-            'end': report.end
-        } for report in node.reports()] if node else []
+        return ReportSerializer_Light(node.reports(), many=True).data if node else []
 
 class NodeSerializer_Enc(serializers.Serializer):
     classes = serializers.StringRelatedField(many=True)
