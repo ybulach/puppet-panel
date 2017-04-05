@@ -29,11 +29,13 @@
                 <span class="glyphicon glyphicon-lock" ng-if="parameter.encrypted"> Encrypted</span>
                 <span ng-if="!parameter.encrypted">{{parameter.value}}</span>
               </td>
-              <td title="'Node'" sortable="'node'" filter="{node: 'text'}"><a ng-href="#/nodes/{{parameter.node}}">{{parameter.node}}</a></td>
-              <td title="'Group'" sortable="'group'" filter="{group: 'text'}"><a ng-href="#/groups/{{parameter.group}}">{{parameter.group}}</a></td>
+              <td title="'Target'">
+                <span ng-if="parameter.node"><span class="glyphicon glyphicon-file"></span> <a ng-href="#/nodes/{{parameter.node}}">{{parameter.node}}</a></span>
+                <span ng-if="parameter.group"><span class="glyphicon glyphicon-duplicate"></span> <a ng-href="#/groups/{{parameter.group}}" ng-if="parameter.group">{{parameter.group}}</a></span>
+              </td>
             </tr>
             <tr ng-if="!parameters.table.data.length">
-              <td colspan="4">No parameter found.</td>
+              <td colspan="3">No parameter found.</td>
             </tr>
           </tbody>
         </table>

@@ -56,11 +56,11 @@
       <div class="clearfix"></div>
 
       <div class="table-responsive">
-        <table class="table table-hover table-striped table-nowrap" ng-table="parameters" show-filter="false">
+        <table class="table table-hover table-striped table-nowrap" ng-table="parameters" show-filter="true">
           <tbody>
             <tr ng-repeat="parameter in $data">
-              <td title="'Name'" sortable="'name'">{{parameter.name}}</td>
-              <td title="'Value'" sortable="'value'">
+              <td title="'Name'" sortable="'name'" filter="{name: 'text'}">{{parameter.name}}</td>
+              <td title="'Value'" sortable="'value'" filter="{value: 'text'}">
                 <span class="glyphicon glyphicon-lock" ng-if="parameter.encrypted"> Encrypted</span>
                 <span ng-if="!parameter.encrypted">{{parameter.value}}</span>
               </td>

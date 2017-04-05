@@ -24,10 +24,10 @@
       <div class="clearfix"></div>
 
       <div class="table-responsive">
-        <table class="table table-hover table-striped" ng-table="classes.table" show-filter="false">
+        <table class="table table-hover table-striped" ng-table="classes.table" show-filter="true">
           <tbody>
             <tr ng-repeat="class in $data">
-              <td title="'Name'" sortable="'name'"><a ng-href="#/classes/{{class.name}}">{{class.name}}</a></td>
+              <td title="'Name'" sortable="'name'" filter="{name: 'text'}"><a ng-href="#/classes/{{class.name}}">{{class.name}}</a></td>
             </tr>
             <tr ng-if="!classes.table.data.length">
               <td>No class. Add one to see it here !</td>
