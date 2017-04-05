@@ -14,7 +14,7 @@
 
   <div class="row">
     <div class="col-lg-12">
-      <h2><small class="pull-right">Last refresh: {{nodes.lastrefresh | date: 'medium'}}</small> Nodes status</h2>
+      <h2><span class="pull-right"><small ng-if="nodes.lastrefresh">Last refresh: {{nodes.lastrefresh | date: 'medium'}}</small><small ng-if="!nodes.lastrefresh">Refreshing</small></span> Nodes status</h2>
       <div class="alert alert-danger" ng-if="nodes.error">{{nodes.error}}</div>
     </div>
   </div>

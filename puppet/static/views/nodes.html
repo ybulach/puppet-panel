@@ -14,7 +14,7 @@
 
   <div class="row">
     <div class="col-lg-12">
-      <h2><small class="pull-right">Last refresh: {{nodes.lastrefresh | date: 'medium'}}</small> Managed nodes</h2>
+      <h2><span class="pull-right"><small ng-if="nodes.lastrefresh">Last refresh: {{nodes.lastrefresh | date: 'medium'}}</small><small ng-if="!nodes.lastrefresh">Refreshing</small></span> Managed nodes</h2>
       <div ng-if="nodes.error" class="alert alert-danger">{{nodes.error}}</div>
     </div>
 
@@ -52,7 +52,7 @@
 
   <div class="row">
     <div class="col-lg-12">
-      <h2><small class="pull-right">Last refresh: {{orphans.lastrefresh | date: 'medium'}}</small> Orphan nodes</h2>
+      <h2><span class="pull-right"><small ng-if="orphans.lastrefresh">Last refresh: {{orphans.lastrefresh | date: 'medium'}}</small><small ng-if="!orphans.lastrefresh">Refreshing</small></span> Orphan nodes</h2>
       <div ng-if="orphans.error" class="alert alert-danger">{{orphans.error}}</div>
     </div>
 
