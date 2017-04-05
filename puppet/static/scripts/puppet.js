@@ -33,6 +33,12 @@ angular.module('puppetPanel')
       controller: 'ClassCtrl'
     })
 
+    // Parameters
+    .when('/parameters', {
+      templateUrl: 'static/views/parameters.html',
+      controller: 'ParametersCtrl'
+    })
+
     // Reports
     .when('/reports', {
       templateUrl: 'static/views/reports.html',

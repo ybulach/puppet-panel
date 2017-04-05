@@ -171,6 +171,30 @@ class ReportViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.G
         serializer = serializers.ReportSerializer_Full(report)
         return response.Response(serializer.data)
 
+# Parameters (global listing)
+class ParameterViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    def list(self, request, *args, **kwargs):
+        # Get node and group parameters
+        nodeparameters = [{
+            'name': parameter.name,
+            'group': '',
+            'node': parameter.node.name,
+            'value': parameter.value if not parameter.encrypted else '',
+            'encrypted': parameter.encrypted
+        } for parameter in models.NodeParameter.objects.all()]
+
+        groupparameters = [{
+            'name': parameter.name,
+            'group': parameter.group.name,
+            'node': '',
+            'value': parameter.value if not parameter.encrypted else '',
+            'encrypted': parameter.encrypted
+        } for parameter in models.GroupParameter.objects.all()]
+
+        # Return combined result
+        serializer = serializers.ParameterSerializer(nodeparameters + groupparameters, many=True)
+        return response.Response(serializer.data)
+
 # Groups
 class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.GroupSerializer

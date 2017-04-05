@@ -65,6 +65,17 @@ class ReportSerializer_Full(ReportSerializer_Light):
            'status': event.status
         } for event in obj.events()]
 
+# Parameters (used in global listing)
+class ParameterSerializer(serializers.Serializer):
+    group = serializers.CharField(allow_blank=False, trim_whitespace=False, required=True)
+    node = serializers.CharField(allow_blank=False, trim_whitespace=False, required=True)
+    name = serializers.CharField(allow_blank=False, trim_whitespace=False, required=True)
+    value = serializers.CharField(allow_blank=False, trim_whitespace=False, required=True)
+    encrypted = serializers.BooleanField(default=False)
+
+    class Meta:
+        fields = ('group', 'node', 'name', 'value', 'encrypted')
+
 # Groups
 class GroupParameterSerializer(ValidatedSerializer):
     encrypted = serializers.BooleanField(default=False)
