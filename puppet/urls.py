@@ -8,6 +8,7 @@ router = routers.SimpleRouter(trailing_slash=False)
 router.register(r'classes', views.ClassViewSet)
 router.register(r'groups', views.GroupViewSet)
 router.register(r'nodes', views.NodeViewSet)
+router.register(r'orphans', views.OrphanViewSet, base_name='orphans')
 router.register(r'parameters', views.ParameterViewSet, base_name='parameters')
 router.register(r'reports', views.ReportViewSet, base_name='reports')
 

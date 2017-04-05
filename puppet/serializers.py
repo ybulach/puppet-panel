@@ -163,3 +163,8 @@ class NodeSerializer_Full(NodeSerializer_Light):
 class NodeSerializer_Enc(serializers.Serializer):
     classes = serializers.StringRelatedField(many=True)
     parameters = NodeParameterSerializer(many=True)
+
+# Orphans
+class OrphanSerializer(serializers.Serializer):
+    name = serializers.CharField(allow_blank=False, trim_whitespace=False, required=True)
+    source = serializers.CharField(allow_blank=False, trim_whitespace=False, required=True)

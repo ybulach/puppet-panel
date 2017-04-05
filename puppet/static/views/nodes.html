@@ -12,11 +12,7 @@
 
   <div class="modal-parent"></div>
 
-  <div class="row" ng-if="!loaded">
-    <div class="col-lg-12">Loading...</div>
-  </div>
-
-  <div class="row" ng-if="loaded">
+  <div class="row">
     <div class="col-lg-12">
       <h2><small class="pull-right">Last refresh: {{nodes.lastrefresh | date: 'medium'}}</small> Managed nodes</h2>
       <div ng-if="nodes.error" class="alert alert-danger">{{nodes.error}}</div>
@@ -42,8 +38,11 @@
               <td title="'Last catalog'" sortable="'catalog_timestamp'">{{node.catalog_timestamp | date: 'medium'}}</td>
               <td title="'Last facts'" sortable="'facts_timestamp'">{{node.facts_timestamp | date: 'medium'}}</td>
             </tr>
-            <tr ng-if="!nodes.table.data.length">
+            <tr ng-if="!nodes.table.data.length && nodes.lastrefresh">
               <td colspan="5">No node. Add one to see it here !</td>
+            </tr>
+            <tr ng-if="!nodes.lastrefresh && !nodes.error">
+              <td colspan="5">Loading...</td>
             </tr>
           </tbody>
         </table>
@@ -51,10 +50,33 @@
     </div>
   </div>
 
-  <div class="row" ng-if="loaded">
+  <div class="row">
     <div class="col-lg-12">
       <h2><small class="pull-right">Last refresh: {{orphans.lastrefresh | date: 'medium'}}</small> Orphan nodes</h2>
       <div ng-if="orphans.error" class="alert alert-danger">{{orphans.error}}</div>
+    </div>
+
+    <div class="col-lg-12">
+      <div class="table-responsive">
+        <table class="table table-hover table-striped" ng-table="orphans.table" show-filter="true">
+          <tbody>
+            <tr ng-repeat="orphan in $data">
+              <td title="'Hostname'" sortable="'name'" filter="{name: 'text'}">{{orphan.name}}</td>
+              <td title="'Source'" sortable="'source'">{{orphan.source}}</td>
+              <td class="text-right"><small>
+                <button type="button" class="btn btn-success btn-sm" ng-click="orphans.create(orphan.name)"><span class="glyphicon glyphicon-plus"></span> Manage</button>
+                <button type="button" class="btn btn-danger btn-sm" ng-click="orphans.delete(orphan.name)"><span class="glyphicon glyphicon-trash"></span> Clean</button>
+              </td>
+            </tr>
+            <tr ng-if="!orphans.table.data.length">
+              <td colspan="3">No orphan node. Everything is fine !</td>
+            </tr>
+            <tr ng-if="!orphans.lastrefresh && !orphans.error">
+              <td colspan="3">Loading...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>

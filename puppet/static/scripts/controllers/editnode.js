@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('puppetPanel')
-.controller('EditNodeCtrl', ['$scope', '$uibModalInstance', '$http', 'ApiService', 'nodeData', function($scope, $uibModalInstance, $http, ApiService, nodeData) {
+.controller('EditNodeCtrl', ['$scope', '$uibModalInstance', '$http', 'ApiService', 'nodeData', 'creation', function($scope, $uibModalInstance, $http, ApiService, nodeData, creation) {
   var initialName = nodeData.name;
   $scope.node = angular.copy(nodeData);
   $scope.classes = [];
@@ -38,7 +38,7 @@ angular.module('puppetPanel')
     ApiService.cleanErrorsInForm($scope.form);
 
     // Create new node
-    if(initialName === undefined) {
+    if((initialName === undefined) || creation) {
       $http.post(ApiService.getConfig('url') + '/nodes', $scope.node)
       .then(function(result) {
         $uibModalInstance.close(result.data);

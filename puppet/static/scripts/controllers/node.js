@@ -45,7 +45,8 @@ angular.module('puppetPanel')
       controller: 'EditNodeCtrl',
       appendTo: modalParent(),
       resolve: {
-        nodeData: $scope.node.data
+        nodeData: $scope.node.data,
+        creation: false
       }
     })
 

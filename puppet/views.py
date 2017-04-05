@@ -330,3 +330,34 @@ class NodeEncViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         # Return result
         serializer = self.get_serializer({'classes': classes, 'parameters': parameters})
         return response.Response(serializer.data)
+
+# Orphans
+class OrphanViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    serializer_class = serializers.OrphanSerializer
+    lookup_field = 'name'
+    lookup_value_regex = validators.node_name_regex
+
+    # List orphan nodes
+    def list(self, request, *args, **kwargs):
+        orphans = {}
+
+        try:
+            db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
+
+            for node in db.nodes():
+                if node.deactivated: continue
+
+                try:
+                    models.Node.objects.get(name=node)
+                except models.Node.DoesNotExist:
+                    orphans[node.name] = {
+                        'name': node.name,
+                        'source': 'PuppetDB'
+                    }
+        except Exception as e:
+            print type(e)
+            raise exceptions.APIException('Can\'t get orphan nodes from PuppetDB: %s' % e)
+
+        # Return result
+        serializer = self.get_serializer(orphans.values(), many=True)
+        return response.Response(serializer.data)
