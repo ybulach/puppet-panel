@@ -61,7 +61,7 @@
           <tbody>
             <tr ng-repeat="apikey in $data">
               <td title="'Key'" sortable="'key'">{{apikey.key}}</td>
-              <td title="'Created at'" sortable="'created_at'">{{apikey.created_at}}</td>
+              <td title="'Created at'" sortable="'created_at'">{{apikey.created_at | date: 'medium'}}</td>
               <td class="text-right"><button type="button" class="btn btn-danger" ng-click="apikeys.delete(apikey.key)"><span class="glyphicon glyphicon-trash"></span> Delete</button></td>
             </tr>
             <tr ng-if="!apikeys.table.data.length">
