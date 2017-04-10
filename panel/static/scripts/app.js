@@ -18,12 +18,6 @@ angular.module('puppetPanel', [
   cfpLoadingBarProvider.parentSelector = '#loading-bar-container';
 
   $routeProvider
-    // Dashboard / default view
-    .when('/', {
-      templateUrl: 'static/views/home.html',
-      controller: 'HomeCtrl'
-    })
-
     // User authentication / settings
     .when('/login', {
       templateUrl: 'static/views/login.html',

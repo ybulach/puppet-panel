@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('puppetPanel')
-.controller('HomeCtrl', ['$scope', '$location', '$http', '$filter', '$interval', 'ApiService', function($scope, $location, $http, $filter, $interval, ApiService) {
+.controller('DashboardCtrl', ['$scope', '$location', '$http', '$filter', '$interval', 'ApiService', function($scope, $location, $http, $filter, $interval, ApiService) {
   if(!ApiService.loggedIn()) {
     $location.path('/login');
     return;
@@ -35,10 +35,5 @@ angular.module('puppetPanel')
 
   $scope.$on("$destroy", function() {
     $interval.cancel(autorefresh);
-  });
-
-  // Show view when loaded
-  $scope.$on('cfpLoadingBar:completed', function() {
-    $scope.loaded = true;
   });
 }]);

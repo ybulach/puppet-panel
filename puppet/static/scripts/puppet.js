@@ -3,6 +3,12 @@
 angular.module('puppetPanel')
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider
+    // Dashboard
+    .when('/', {
+      templateUrl: 'static/views/dashboard.html',
+      controller: 'DashboardCtrl'
+    })
+
     // Nodes
     .when('/nodes', {
       templateUrl: 'static/views/nodes.html',
