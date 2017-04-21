@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 if not RUBY_VERSION.to_f > 2
-  warn "Please use Ruby 2+"
+  puts "Please use Ruby 2+"
   exit 1
 end
 
@@ -94,8 +94,11 @@ if __FILE__ == $0 then
 
       puts YAML::dump(result)
     end
+  rescue Timeout::Error => e
+    puts "ENC execution timeout reached. Increase :timeout: in #{settings_file} if you are trying to decrypt lots of parameters."
+    exit 1
   rescue => e
-    warn e
+    puts "Uncatched exception: #{e}"
     exit 1
   end
 end
