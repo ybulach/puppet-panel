@@ -84,15 +84,21 @@ class GroupParameterSerializer(ValidatedSerializer):
         model = models.GroupParameter
         fields = ('name', 'value', 'encryption_key', 'encrypted')
 
-class GroupSerializer(serializers.ModelSerializer):
+class GroupSerializer_Light(serializers.ModelSerializer):
     classes = serializers.SlugRelatedField(slug_field='name', queryset=models.Class.objects.all(), many=True, required=False)
     parents = serializers.SlugRelatedField(slug_field='name', queryset=models.Group.objects.all(), many=True, required=False)
-    parameters = GroupParameterSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Group
-        fields = ('name', 'parents', 'classes', 'parameters')
-        read_only_fields = ('parameters',)
+        fields = ('name', 'parents', 'classes')
+        read_only_fields = ()
+
+class GroupSerializer_Full(GroupSerializer_Light):
+    parameters = GroupParameterSerializer(many=True, read_only=True)
+
+    class Meta(GroupSerializer_Light.Meta):
+        fields = GroupSerializer_Light.Meta.fields + ('parameters',)
+        read_only_fields = GroupSerializer_Light.Meta.read_only_fields + ('parameters',)
 
 # Nodes
 class NodeParameterSerializer(ValidatedSerializer):

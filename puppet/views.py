@@ -197,10 +197,15 @@ class ParameterViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 # Groups
 class GroupViewSet(viewsets.ModelViewSet):
-    serializer_class = serializers.GroupSerializer
     lookup_field = 'name'
     lookup_value_regex = validators.group_name_regex
     queryset = models.Group.objects.all()
+
+    def get_serializer_class(self):
+        if self.action in ['retrieve', 'create', 'update']:
+            return serializers.GroupSerializer_Full
+        else:
+            return serializers.GroupSerializer_Light
 
 class GroupParameterViewSet(NestedModelViewSet):
     serializer_class = serializers.GroupParameterSerializer
@@ -222,7 +227,7 @@ class GroupClassViewSet(ClassNestedViewSet):
 
 class GroupGroupViewSet(ManyToManyNestedViewSet):
     # Default attributes
-    serializer_class = serializers.GroupSerializer
+    serializer_class = serializers.GroupSerializer_Light
     lookup_field = 'name'
     lookup_value_regex = validators.group_name_regex
 
@@ -265,7 +270,7 @@ class NodeClassViewSet(ClassNestedViewSet):
 
 class NodeGroupViewSet(ManyToManyNestedViewSet):
     # Default attributes
-    serializer_class = serializers.GroupSerializer
+    serializer_class = serializers.GroupSerializer_Light
     lookup_field = 'name'
     lookup_value_regex = validators.group_name_regex
 
@@ -282,7 +287,7 @@ class NodeEncViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     # Iter a node/group (and his parents) and return classes and parameters
     def iter_object(self, obj, past_objects):
         classes = []
-        parameters = []
+        parameters = {}
 
         # Prevent infinite loop
         if obj.name in past_objects:
@@ -294,7 +299,7 @@ class NodeEncViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             classes.append(cls)
 
         for parameter in obj.parameters.all():
-            parameters.append(parameter)
+            parameters[parameter.name] = parameter
 
         # Parent objects
         parents = obj.groups if hasattr(obj, 'groups') else obj.parents
@@ -306,15 +311,9 @@ class NodeEncViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
                 if not cls in classes:
                     classes.append(cls)
 
-            for parameter in parent_parameters:
-                duplicate = False
-                for param in parameters:
-                    if param.name == parameter.name:
-                        duplicate = True
-                        break
-
-                if not duplicate:
-                    parameters.append(parameter)
+            for name, parameter in parent_parameters.iteritems():
+                if not name in parameters:
+                    parameters[name] = parameter
 
         # Return result
         return (classes, parameters, past_objects)
@@ -328,7 +327,7 @@ class NodeEncViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         classes, parameters, past_objects = self.iter_object(node, [])
 
         # Return result
-        serializer = self.get_serializer({'classes': classes, 'parameters': parameters})
+        serializer = self.get_serializer({'classes': classes, 'parameters': parameters.values()})
         return response.Response(serializer.data)
 
 # Orphans
