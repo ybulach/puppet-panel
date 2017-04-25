@@ -15,7 +15,7 @@
       <label for="classes">Classes</label>
       <ui-select name="classes" ng-model="group.classes" close-on-select="false" multiple>
         <ui-select-match placeholder="Select classes...">{{$item}}</ui-select-match>
-        <ui-select-choices repeat="class in classes | filter:$select.search">{{class}}</ui-select-choices>
+        <ui-select-choices repeat="class in classes | filter:$select.search | orderBy: 'toString()'">{{class}}</ui-select-choices>
       </ui-select>
       <span class="help-block" ng-if="form.classes.error">{{form.classes.error}}</span>
     </div>
@@ -24,7 +24,7 @@
       <label for="parents">Parents</label>
       <ui-select name="parents" ng-model="group.parents" close-on-select="false" multiple>
         <ui-select-match placeholder="Select parents...">{{$item}}</ui-select-match>
-        <ui-select-choices repeat="group in parents | filter:$select.search">{{group}}</ui-select-choices>
+        <ui-select-choices repeat="group in parents | filter:$select.search | orderBy: 'toString()'">{{group}}</ui-select-choices>
       </ui-select>
       <span class="help-block" ng-if="form.parents.error">{{form.parents.error}}</span>
     </div>
