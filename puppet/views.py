@@ -202,7 +202,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = models.Group.objects.all()
 
     def get_serializer_class(self):
-        if self.action in ['retrieve', 'create', 'update']:
+        if self.action in ['retrieve', 'create', 'update', 'partial_update']:
             return serializers.GroupSerializer_Full
         else:
             return serializers.GroupSerializer_Light
@@ -245,7 +245,7 @@ class NodeViewSet(viewsets.ModelViewSet):
     queryset = models.Node.objects.all()
 
     def get_serializer_class(self):
-        if self.action in ['retrieve', 'create', 'update']:
+        if self.action in ['retrieve', 'create', 'update', 'partial_update']:
             return serializers.NodeSerializer_Full
         else:
             return serializers.NodeSerializer_Light
