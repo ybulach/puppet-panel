@@ -129,6 +129,7 @@ class NodeSerializer_Light(serializers.ModelSerializer):
                 self.node[name] = db.nodes(path=name, with_status=True).next()
             except Exception as e:
                 if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 404:
+                    self.node[name] = None
                     return None
                 raise rest_framework.exceptions.APIException('Can\'t get node from PuppetDB: %s' % e)
 
