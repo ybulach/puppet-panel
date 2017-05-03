@@ -181,7 +181,7 @@ class OrphanSerializer(serializers.Serializer):
 class CertificateSerializer_Read(serializers.Serializer):
     name = serializers.CharField(allow_blank=False, trim_whitespace=False)
     dns_alt_names = serializers.ListField(serializers.CharField(allow_blank=False, trim_whitespace=False))
-    state = serializers.ChoiceField(['signed', 'revoked'], allow_blank=False)
+    state = serializers.CharField(allow_blank=False, trim_whitespace=False)
     fingerprint = serializers.CharField(allow_blank=False, trim_whitespace=False)
 
 class CertificateSerializer_Write(serializers.Serializer):

@@ -19,6 +19,7 @@
     <div class="form-group" ng-class="{'has-error': form.state.error}">
       <label for="state" class="required">State</label>
       <select ng-model="certificate.state" class="form-control" name="state" required>
+        <option value="requested">Requested</option>
         <option value="signed">Signed</option>
         <option value="revoked">Revoked</option>
       </select>

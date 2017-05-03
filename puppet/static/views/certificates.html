@@ -18,6 +18,8 @@
 
   <div class="row" ng-if="loaded">
     <div class="col-lg-12">
+      <div class="alert alert-info">When revoking a certificate, the <b>puppetserver</b> service must be restarted in order for the changes to take effect.</div>
+
       <div ng-if="certificates.error" class="alert alert-danger">{{certificates.error}}</div>
 
       <div class="table-responsive">
@@ -26,6 +28,7 @@
             <tr ng-repeat="certificate in $data">
               <td title="'Name'" sortable="'name'" filter="{name: 'text'}"><a ng-href="#/nodes/{{certificate.name}}">{{certificate.name}}</a></td>
               <td title="'State'" sortable="'state'">
+                <div class="label label-info" ng-if="certificate.state == 'requested'">Requested</div>
                 <div class="label label-success" ng-if="certificate.state == 'signed'">Signed</div>
                 <div class="label label-danger" ng-if="certificate.state == 'revoked'">Revoked</div>
               </td>
