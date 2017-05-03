@@ -28,9 +28,17 @@ DATABASES = {
 
 PUPPET_PUBLIC_KEY = 'puppet.pub.pem'
 
+PUPPET_CA_CRT = 'ca.pem'
+
+PUPPET_CLIENT_CRT = 'panel.puppet.domain.tld.crt.pem'
+
+PUPPET_CLIENT_KEY = 'panel.puppet.domain.tld.key.pem'
+
 
 # Puppet DB
 
-PUPPETDB_HOST = 'localhost'
+PUPPETDB_HOST = 'db.puppet.domain.tld'
 
-PUPPETDB_PORT = '8080'
+PUPPETDB_PORT = '8081'
+
+PUPPETDB_SSL = True

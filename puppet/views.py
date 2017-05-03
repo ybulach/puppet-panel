@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 from django import http, shortcuts
-from django.conf import settings
 import pypuppetdb
 from rest_framework import exceptions, mixins, response, status, viewsets
 import rest_framework.serializers
@@ -8,6 +7,7 @@ import requests.exceptions
 
 import models
 import serializers
+import utils
 import validators
 
 # A generic view set to be used by nested models (handles parent ID)
@@ -144,7 +144,7 @@ class ReportViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.G
     # List reports of the last hour
     def list(self, request, *args, **kwargs):
         try:
-            db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
+            db = utils.puppetdb_connect()
             query = pypuppetdb.QueryBuilder.GreaterEqualOperator('start_time', (datetime.today() - timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S"))
             reports = db.reports(query=query)
         except Exception as e:
@@ -159,7 +159,7 @@ class ReportViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.G
     # Get one report
     def retrieve(self, request, *args, **kwargs):
         try:
-            db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
+            db = utils.puppetdb_connect()
             query = pypuppetdb.QueryBuilder.EqualsOperator('transaction_uuid', kwargs[self.lookup_field])
             report = db.reports(query=query).next()
         except Exception as e:
@@ -341,7 +341,7 @@ class OrphanViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         orphans = {}
 
         try:
-            db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
+            db = utils.puppetdb_connect()
 
             for node in db.nodes():
                 if node.deactivated: continue

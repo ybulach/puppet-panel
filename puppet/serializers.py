@@ -1,11 +1,10 @@
-from django.conf import settings
 from django.core import exceptions
-import pypuppetdb
 from rest_framework import serializers
 import rest_framework.exceptions
 import requests.exceptions
 
 import models
+import utils
 
 # A serializer that validate its fields using the model 'clean()' method
 class ValidatedSerializer(serializers.ModelSerializer):
@@ -120,18 +119,20 @@ class NodeSerializer_Light(serializers.ModelSerializer):
         read_only_fields = ('status', 'report_timestamp', 'catalog_timestamp', 'facts_timestamp')
 
     def get_node(self, name):
+        # Load the nodes
         if not hasattr(self, 'node'):
             self.node = {}
 
-        if not name in self.node:
             try:
-                db = pypuppetdb.connect(host=settings.PUPPETDB_HOST, port=settings.PUPPETDB_PORT)
-                self.node[name] = db.nodes(path=name, with_status=True).next()
+                db = utils.puppetdb_connect()
+                for node in db.nodes(with_status=True):
+                    self.node[node.name] = node
             except Exception as e:
-                if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 404:
-                    self.node[name] = None
-                    return None
                 raise rest_framework.exceptions.APIException('Can\'t get node from PuppetDB: %s' % e)
+
+        # Not found node
+        if not name in self.node:
+            self.node[name] = None
 
         return self.node[name]
 
