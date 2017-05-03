@@ -340,6 +340,7 @@ class OrphanViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     def list(self, request, *args, **kwargs):
         orphans = {}
 
+        # PuppetDB orphans
         try:
             db = utils.puppetdb_connect()
 
@@ -355,6 +356,26 @@ class OrphanViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
                     }
         except Exception as e:
             raise exceptions.APIException('Can\'t get orphan nodes from PuppetDB: %s' % e)
+
+        # PuppetCA orphans
+        try:
+            ca = utils.puppetca_query('GET', 'certificate_statuses/*')
+
+            for node in ca.json():
+                if node['state'] == 'revoked': continue
+
+                try:
+                    models.Node.objects.get(name=node['name'])
+                except models.Node.DoesNotExist:
+                    if node['name'] in orphans:
+                        orphans[node['name']]['source'] += ' & PuppetCA'
+                    else:
+                        orphans[node['name']] = {
+                            'name': node['name'],
+                            'source': 'PuppetCA'
+                        }
+        except Exception as e:
+            raise exceptions.APIException('Can\'t get orphan nodes from PuppetCA: %s' % e)
 
         # Return result
         serializer = self.get_serializer(orphans.values(), many=True)
