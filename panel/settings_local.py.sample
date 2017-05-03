@@ -26,7 +26,7 @@ DATABASES = {
 
 # Puppet
 
-PUPPET_PUBLIC_KEY = 'puppet.pub.pem'
+PUPPET_ENCRYPTION_PUBKEY = 'puppet.pub.pem'
 
 PUPPET_CA_CRT = 'ca.pem'
 

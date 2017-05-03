@@ -81,11 +81,11 @@ class Parameter(models.Model):
 
     # Encrypt value if needed
     def encrypt(self):
-        if not hasattr(settings, 'PUPPET_PUBLIC_KEY'):
-            raise exceptions.ValidationError({'encrypted': 'Can\'t encrypt value: missing PUPPET_PUBLIC_KEY setting variable'})
+        if not hasattr(settings, 'PUPPET_ENCRYPTION_PUBKEY'):
+            raise exceptions.ValidationError({'encrypted': 'Can\'t encrypt value: missing PUPPET_ENCRYPTION_PUBKEY setting variable'})
 
         try:
-            with open(settings.PUPPET_PUBLIC_KEY) as file:
+            with open(settings.PUPPET_ENCRYPTION_PUBKEY) as file:
                 pubkey = RSA.importKey(file.read())
         except Exception as e:
             raise exceptions.ValidationError({'encrypted': 'Public key error: %s' % e})
