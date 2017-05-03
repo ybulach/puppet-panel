@@ -5,6 +5,7 @@ import views
 
 # REST routes and nested routes
 router = routers.SimpleRouter(trailing_slash=False)
+router.register(r'certificates', views.CertificateViewSet, base_name='certificates')
 router.register(r'classes', views.ClassViewSet)
 router.register(r'groups', views.GroupViewSet)
 router.register(r'nodes', views.NodeViewSet)

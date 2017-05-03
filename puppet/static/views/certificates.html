@@ -1,0 +1,48 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class="page-header">Certificates</h1>
+
+      <ol class="breadcrumb">
+        <li><a href="#/">Home</a></li>
+        <li class="active">Certificates</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="modal-parent"></div>
+
+  <div class="row" ng-if="!loaded">
+    <div class="col-lg-12">Loading...</div>
+  </div>
+
+  <div class="row" ng-if="loaded">
+    <div class="col-lg-12">
+      <div ng-if="certificates.error" class="alert alert-danger">{{certificates.error}}</div>
+
+      <div class="table-responsive">
+        <table class="table table-hover table-striped" ng-table="certificates.table" show-filter="true">
+          <tbody>
+            <tr ng-repeat="certificate in $data">
+              <td title="'Name'" sortable="'name'" filter="{name: 'text'}"><a ng-href="#/nodes/{{certificate.name}}">{{certificate.name}}</a></td>
+              <td title="'State'" sortable="'state'">
+                <div class="label label-success" ng-if="certificate.state == 'signed'">Signed</div>
+                <div class="label label-danger" ng-if="certificate.state == 'revoked'">Revoked</div>
+              </td>
+              <td title="'Alt names'" sortable="'dns_alt_names'" filter="{dns_alt_names: 'text'}">
+                <span ng-repeat="alt_name in certificate.dns_alt_names">{{alt_name}}{{$last ? '' : ', '}}</span>
+              </td>
+              <td class="text-right">
+                <button type="button" class="btn btn-sm btn-default" ng-click="certificates.edit(certificate)"><span class="glyphicon glyphicon-pencil"></span> Edit</button>
+                <button type="button" class="btn btn-sm btn-danger" ng-click="certificates.delete(certificate)"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+              </td>
+            </tr>
+            <tr ng-if="!certificates.table.data.length">
+              <td colspan="4">No certificate found.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

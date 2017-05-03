@@ -1,0 +1,37 @@
+<form role="form" name="form">
+  <div class="modal-header">
+    <h3 class="modal-title" id="modal-title">Manage certificate</h3>
+  </div>
+  <div class="modal-body" id="modal-body">
+    <div uib-alert class="alert-danger" ng-if="error">{{error}}</div>
+
+    <div class="form-group">
+      <label for="state">Name</label>
+      <input type="text" class="form-control" ng-model="certificate.name" disabled>
+    </div>
+
+    <div class="form-group">
+      <label for="state">Alt names</label>
+      <input type="text" class="form-control" ng-repeat="alt_name in certificate.dns_alt_names" ng-value="alt_name" disabled>
+      <input type="text" class="form-control" ng-if="!certificate.dns_alt_names.length" disabled>
+    </div>
+
+    <div class="form-group" ng-class="{'has-error': form.state.error}">
+      <label for="state" class="required">State</label>
+      <select ng-model="certificate.state" class="form-control" name="state" required>
+        <option value="signed">Signed</option>
+        <option value="revoked">Revoked</option>
+      </select>
+      <span class="help-block" ng-if="form.state.error">{{form.state.error}}</span>
+    </div>
+
+    <div class="form-group">
+      <label for="state">Fingerprint</label>
+      <input type="text" class="form-control" ng-model="certificate.fingerprint" disabled>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-success" type="submit" ng-click="ok()" ng-disabled="status === 'pending' || !form.$valid">OK</button>
+    <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
+  </div>
+</form>

@@ -53,5 +53,11 @@ angular.module('puppetPanel')
     .when('/reports/:transaction', {
       templateUrl: 'static/views/report.html',
       controller: 'ReportCtrl'
+    })
+
+    // Certificates
+    .when('/certificates', {
+      templateUrl: 'static/views/certificates.html',
+      controller: 'CertificatesCtrl'
     });
 }]);

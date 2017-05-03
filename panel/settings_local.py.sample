@@ -42,3 +42,8 @@ PUPPETDB_HOST = 'db.puppet.domain.tld'
 PUPPETDB_PORT = '8081'
 
 PUPPETDB_SSL = True
+
+
+# Puppet CA
+
+PUPPETCA_HOST = 'ca.puppet.domain.tld'

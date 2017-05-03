@@ -354,9 +354,64 @@ class OrphanViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
                         'source': 'PuppetDB'
                     }
         except Exception as e:
-            print type(e)
             raise exceptions.APIException('Can\'t get orphan nodes from PuppetDB: %s' % e)
 
         # Return result
         serializer = self.get_serializer(orphans.values(), many=True)
         return response.Response(serializer.data)
+
+# Certificates
+class CertificateViewSet(mixins.ListModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
+    lookup_field = 'name'
+    lookup_value_regex = validators.node_name_regex
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'update', 'partial_update']:
+            return serializers.CertificateSerializer_Write
+        else:
+            return serializers.CertificateSerializer_Read
+
+    # List certificates
+    def list(self, request, *args, **kwargs):
+        try:
+            ca = utils.puppetca_query('GET', 'certificate_statuses/*')
+            certificates = ca.json()
+        except Exception as e:
+            raise exceptions.APIException('Can\'t get certificates from PuppetCA: %s' % e)
+
+        # Return result
+        serializer = self.get_serializer(certificates, many=True)
+        return response.Response(serializer.data)
+
+    # Update a certificate
+    def update(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # Revoke certificate
+        try:
+            utils.puppetca_query('PUT', 'certificate_status/%s' % kwargs['name'], data={'desired_state': '%s' % serializer.data['state']})
+        except Exception as e:
+            if isinstance(e, requests.exceptions.HTTPError):
+                if e.response.status_code == 404:
+                    raise exceptions.NotFound()
+                if e.response.status_code == 409:
+                    raise exceptions.ValidationError({'state': 'Can\'t change certificate state to the specified value'})
+            raise exceptions.APIException('Can\'t update certificate in PuppetCA: %s' % e)
+
+        # Return result
+        return response.Response(status=status.HTTP_204_NO_CONTENT)
+
+    # Remove a certificate
+    def destroy(self, request, *args, **kwargs):
+        # Revoke and delete certificate
+        try:
+            utils.puppetca_query('PUT', 'certificate_status/%s' % kwargs['name'], data={'desired_state': 'revoked'})
+            utils.puppetca_query('DELETE', 'certificate_status/%s' % kwargs['name'])
+        except Exception as e:
+            if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 404:
+                raise exceptions.NotFound()
+            raise exceptions.APIException('Can\'t delete certificate in PuppetCA: %s' % e)
+
+        # Return result
+        return response.Response(status=status.HTTP_204_NO_CONTENT)

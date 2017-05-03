@@ -176,3 +176,13 @@ class NodeSerializer_Enc(serializers.Serializer):
 class OrphanSerializer(serializers.Serializer):
     name = serializers.CharField(allow_blank=False, trim_whitespace=False, required=True)
     source = serializers.CharField(allow_blank=False, trim_whitespace=False, required=True)
+
+# Certificates
+class CertificateSerializer_Read(serializers.Serializer):
+    name = serializers.CharField(allow_blank=False, trim_whitespace=False)
+    dns_alt_names = serializers.ListField(serializers.CharField(allow_blank=False, trim_whitespace=False))
+    state = serializers.ChoiceField(['signed', 'revoked'], allow_blank=False)
+    fingerprint = serializers.CharField(allow_blank=False, trim_whitespace=False)
+
+class CertificateSerializer_Write(serializers.Serializer):
+    state = serializers.ChoiceField(['signed', 'revoked'], allow_blank=False)
