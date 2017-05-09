@@ -41,11 +41,14 @@ angular.module('puppetPanel')
     })
 
     modalInstance.result.then(function(result) {
+      var page = $scope.certificates.table.page();
+
       var filtered = $filter('filter')($scope.certificates.data, {'name': certificate.name}, true);
-      console.log(filtered);
       if(filtered.length)
         angular.copy(result, $scope.certificates.data[$scope.certificates.data.indexOf(filtered[0])]);
+
       $scope.certificates.table.settings({dataset: $scope.certificates.data});
+      $scope.certificates.table.page(page);
     });
   };
 
@@ -62,10 +65,14 @@ angular.module('puppetPanel')
     });
 
     modalInstance.result.then(function() {
+      var page = $scope.certificates.table.page();
+
       var filtered = $filter('filter')($scope.certificates.data, {'name': certificate.name}, true);
       if(filtered.length)
         $scope.certificates.data.splice($scope.certificates.data.indexOf(filtered[0]), 1);
+
       $scope.certificates.table.settings({dataset: $scope.certificates.data});
+      $scope.certificates.table.page(page);
     });
   };
 }]);
