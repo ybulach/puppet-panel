@@ -467,9 +467,17 @@ class CertificateViewSet(mixins.ListModelMixin, mixins.UpdateModelMixin, viewset
 
     # Remove a certificate
     def destroy(self, request, *args, **kwargs):
-        # Revoke and delete certificate
+        # Revoke certificate (only works if state is not 'requested')
         try:
             utils.puppetca_query('PUT', 'certificate_status/%s' % kwargs['name'], data={'desired_state': 'revoked'})
+        except Exception as e:
+            if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 404:
+                raise exceptions.NotFound()
+            if not isinstance(e, requests.exceptions.HTTPError) or e.response.status_code != 409:
+                raise exceptions.APIException('Can\'t revoke orphan certificate in PuppetCA: %s' % e)
+
+        # Delete certificate
+        try:
             utils.puppetca_query('DELETE', 'certificate_status/%s' % kwargs['name'])
         except Exception as e:
             if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 404:
