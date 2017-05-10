@@ -331,13 +331,13 @@ class NodeEncViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         return response.Response(serializer.data)
 
 # Orphans
-class OrphanViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class OrphanViewSet(mixins.ListModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
     serializer_class = serializers.OrphanSerializer
     lookup_field = 'name'
     lookup_value_regex = validators.node_name_regex
 
-    # List orphan nodes
-    def list(self, request, *args, **kwargs):
+    # Get the orphans from PuppetDB and PuppetCA
+    def get_orphans(self):
         orphans = {}
 
         # PuppetDB orphans
@@ -362,8 +362,6 @@ class OrphanViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             ca = utils.puppetca_query('GET', 'certificate_statuses/*')
 
             for node in ca.json():
-                if node['state'] == 'revoked': continue
-
                 try:
                     models.Node.objects.get(name=node['name'])
                 except models.Node.DoesNotExist:
@@ -377,9 +375,53 @@ class OrphanViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         except Exception as e:
             raise exceptions.APIException('Can\'t get orphan nodes from PuppetCA: %s' % e)
 
+        return orphans
+
+    # List orphan nodes
+    def list(self, request, *args, **kwargs):
+        orphans = self.get_orphans()
+
         # Return result
         serializer = self.get_serializer(orphans.values(), many=True)
         return response.Response(serializer.data)
+
+    # Remove an orphan node
+    def destroy(self, request, *args, **kwargs):
+        orphans = self.get_orphans()
+        if not kwargs['name'] in orphans:
+            raise exceptions.NotFound()
+
+        # Delete the orphan in PuppetDB
+        try:
+            db = utils.puppetdb_connect()
+            query = db._session.post('%s/pdb/cmd/v1' % db.base_url,
+                params={'certname': kwargs['name'], 'command': 'deactivate_node', 'version': 3},
+                json={'certname': kwargs['name']},
+                verify=db.ssl_verify,
+                cert=(db.ssl_cert, db.ssl_key),
+                timeout=db.timeout,
+                auth=(db.username, db.password)
+            )
+            query.raise_for_status()
+        except Exception as e:
+            raise exceptions.APIException('Can\'t deactivate orphan in PuppetDB: %s' % e)
+
+        # Revoke the orphan certificate in PuppetCA (only works if state is not 'requested')
+        try:
+            utils.puppetca_query('PUT', 'certificate_status/%s' % kwargs['name'], data={'desired_state': 'revoked'})
+        except Exception as e:
+            if not isinstance(e, requests.exceptions.HTTPError) or not e.response.status_code in [404, 409]:
+                raise exceptions.APIException('Can\'t revoke orphan certificate in PuppetCA: %s' % e)
+
+        # Delete the orphan in PuppetCA
+        try:
+            utils.puppetca_query('DELETE', 'certificate_status/%s' % kwargs['name'])
+        except Exception as e:
+            if not isinstance(e, requests.exceptions.HTTPError) or e.response.status_code != 404:
+                raise exceptions.APIException('Can\'t delete orphan in PuppetCA: %s' % e)
+
+        # Return result
+        return response.Response(status=status.HTTP_204_NO_CONTENT)
 
 # Certificates
 class CertificateViewSet(mixins.ListModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):

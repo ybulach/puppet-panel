@@ -72,8 +72,8 @@
               <td title="'Hostname'" sortable="'name'" filter="{name: 'text'}">{{orphan.name}}</td>
               <td title="'Source'" sortable="'source'">{{orphan.source}}</td>
               <td class="text-right"><small>
-                <button type="button" class="btn btn-success btn-sm" ng-click="orphans.create(orphan.name)"><span class="glyphicon glyphicon-plus"></span> Manage</button>
-                <button type="button" class="btn btn-danger btn-sm" ng-click="orphans.delete(orphan.name)"><span class="glyphicon glyphicon-trash"></span> Clean</button>
+                <button type="button" class="btn btn-success btn-sm" ng-click="orphans.create(orphan)"><span class="glyphicon glyphicon-plus"></span> Manage</button>
+                <button type="button" class="btn btn-danger btn-sm" ng-click="orphans.delete(orphan)"><span class="glyphicon glyphicon-trash"></span> Clean</button>
               </td>
             </tr>
             <tr ng-if="!orphans.table.data.length">

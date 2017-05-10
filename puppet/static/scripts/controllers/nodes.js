@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('puppetPanel')
-.controller('NodesCtrl', ['$scope', '$location', '$uibModal', '$http', '$document', '$interval', 'ApiService', 'NgTableParams', function($scope, $location, $uibModal, $http, $document, $interval, ApiService, NgTableParams) {
+.controller('NodesCtrl', ['$scope', '$location', '$uibModal', '$http', '$document', '$interval', '$filter', 'ApiService', 'NgTableParams', function($scope, $location, $uibModal, $http, $document, $interval, $filter, ApiService, NgTableParams) {
   if(!ApiService.loggedIn()) {
   	$location.path('/login');
     return;
@@ -80,7 +80,7 @@ angular.module('puppetPanel')
       controller: 'EditNodeCtrl',
       appendTo: modalParent(),
       resolve: {
-        nodeData: {name: node},
+        nodeData: {name: node.name},
         creation: true
       }
     })
@@ -91,6 +91,26 @@ angular.module('puppetPanel')
   };
 
   $scope.orphans.delete = function(node) {
-    // TODO
+    var modalInstance = $uibModal.open({
+      templateUrl: 'static/views/genericdeletion.html',
+      controller: 'GenericDeletionCtrl',
+      appendTo: modalParent(),
+      resolve: {
+        url: function() {
+          return ApiService.getConfig('url') + '/orphans/' + node.name;
+        }
+      }
+    });
+
+    modalInstance.result.then(function() {
+      var page = $scope.orphans.table.page();
+
+      var filtered = $filter('filter')($scope.orphans.data, {'name': node.name}, true);
+      if(filtered.length)
+        $scope.orphans.data.splice($scope.orphans.data.indexOf(filtered[0]), 1);
+
+      $scope.orphans.table.settings({dataset: $scope.orphans.data});
+      $scope.orphans.table.page(page);
+    });
   };
 }]);
