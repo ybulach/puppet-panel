@@ -1,7 +1,10 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-lg-12">
-      <h1 class="page-header"><small class="glyphicon glyphicon-refresh pull-right"></small> Nodes</h1>
+      <h1 class="page-header">
+        <button type="button" class="btn btn-success pull-right" ng-click="nodes.create()"><span class="glyphicon glyphicon-plus"></span> Create a node</button>
+        Nodes
+      </h1>
 
       <ol class="breadcrumb">
         <li><a href="#/">Home</a></li>
@@ -14,14 +17,15 @@
 
   <div class="row">
     <div class="col-lg-12">
-      <h2><span class="pull-right"><small ng-if="nodes.lastrefresh">Last refresh: {{nodes.lastrefresh | date: 'medium'}}</small><small ng-if="!nodes.lastrefresh">Refreshing</small></span> Managed nodes</h2>
+      <h2>
+        <small class="glyphicon glyphicon-refresh pull-right"></small>
+        Managed nodes
+      </h2>
+      <h3><small ng-if="nodes.lastrefresh">Last refresh: {{nodes.lastrefresh | date: 'medium'}}</small><small ng-if="!nodes.lastrefresh">Refreshing</small></h3>
       <div ng-if="nodes.error" class="alert alert-danger">{{nodes.error}}</div>
     </div>
 
     <div class="col-lg-12">
-      <button type="button" class="btn btn-success pull-right" ng-click="nodes.create()"><span class="glyphicon glyphicon-plus"></span> Create a node</button>
-      <div class="clearfix"></div>
-
       <div class="table-responsive">
         <table class="table table-hover table-striped" ng-table="nodes.table" show-filter="true">
           <tbody>
@@ -52,7 +56,11 @@
 
   <div class="row">
     <div class="col-lg-12">
-      <h2><span class="pull-right"><small ng-if="orphans.lastrefresh">Last refresh: {{orphans.lastrefresh | date: 'medium'}}</small><small ng-if="!orphans.lastrefresh">Refreshing</small></span> Orphan nodes</h2>
+      <h2>
+        <small class="glyphicon glyphicon-refresh pull-right"></small>
+        Orphan nodes
+      </h2>
+      <h3><small ng-if="orphans.lastrefresh">Last refresh: {{orphans.lastrefresh | date: 'medium'}}</small><small ng-if="!orphans.lastrefresh">Refreshing</small></h3>
       <div ng-if="orphans.error" class="alert alert-danger">{{orphans.error}}</div>
     </div>
 

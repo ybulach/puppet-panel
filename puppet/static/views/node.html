@@ -6,7 +6,6 @@
           <button type="button" class="btn btn-default" ng-click="node.edit()"><span class="glyphicon glyphicon-pencil"></span> Edit node</button>
           <button type="button" class="btn btn-danger" ng-click="node.delete()"><span class="glyphicon glyphicon-trash"></span> Delete node</button>
         </div>
-
         Node <small>{{name}}</small>
       </h1>
 
@@ -83,8 +82,10 @@
     </div>
 
     <div class="col-lg-8">
-      <h2>Parameters</h2>
-      <button type="button" class="btn btn-success pull-right" ng-click="parameters.edit(undefined)"><span class="glyphicon glyphicon-plus"></span> Add parameter</button>
+      <h2>
+        <button type="button" class="btn btn-success pull-right" ng-click="parameters.edit(undefined)"><span class="glyphicon glyphicon-plus"></span> Add parameter</button>
+        Parameters
+      </h2>
       <div class="clearfix"></div>
 
       <div class="table-responsive">

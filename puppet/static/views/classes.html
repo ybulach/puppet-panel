@@ -1,7 +1,10 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-lg-12">
-      <h1 class="page-header">Classes</h1>
+      <h1 class="page-header">
+        <button type="button" class="btn btn-success pull-right" ng-click="classes.create()"><span class="glyphicon glyphicon-plus"></span> Create a class</button>
+        Classes
+      </h1>
 
       <ol class="breadcrumb">
         <li><a href="#/">Home</a></li>
@@ -20,7 +23,6 @@
     <div class="col-lg-12">
       <div ng-if="classes.error" class="alert alert-danger">{{classes.error}}</div>
 
-      <button type="button" class="btn btn-success pull-right" ng-click="classes.create()"><span class="glyphicon glyphicon-plus"></span> Create a class</button>
       <div class="clearfix"></div>
 
       <div class="table-responsive">
