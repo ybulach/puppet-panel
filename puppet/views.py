@@ -393,16 +393,7 @@ class OrphanViewSet(mixins.ListModelMixin, mixins.DestroyModelMixin, viewsets.Ge
 
         # Delete the orphan in PuppetDB
         try:
-            db = utils.puppetdb_connect()
-            query = db._session.post('%s/pdb/cmd/v1' % db.base_url,
-                params={'certname': kwargs['name'], 'command': 'deactivate_node', 'version': 3},
-                json={'certname': kwargs['name']},
-                verify=db.ssl_verify,
-                cert=(db.ssl_cert, db.ssl_key),
-                timeout=db.timeout,
-                auth=(db.username, db.password)
-            )
-            query.raise_for_status()
+            db = utils.puppetdb_deactivate_node(kwargs['name'])
         except Exception as e:
             raise exceptions.APIException('Can\'t deactivate orphan in PuppetDB: %s' % e)
 

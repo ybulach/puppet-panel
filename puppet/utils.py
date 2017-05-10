@@ -20,6 +20,19 @@ def puppetdb_connect():
 
 	return pypuppetdb.connect(**puppetdb_params)
 
+# Custom PuppetDB function to deactivate a node
+def puppetdb_deactivate_node(name):
+	db = puppetdb_connect()
+	query = db._session.post('%s/pdb/cmd/v1' % db.base_url,
+		params={'certname': name, 'command': 'deactivate_node', 'version': 3},
+		json={'certname': name},
+		verify=db.ssl_verify,
+		cert=(db.ssl_cert, db.ssl_key),
+		timeout=db.timeout,
+		auth=(db.username, db.password)
+	)
+	query.raise_for_status()
+
 # Connect to PuppetCA using all configuration parameters
 def puppetca_query(method, url, data=''):
 	puppetca_params = {

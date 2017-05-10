@@ -5,8 +5,9 @@ from Crypto import Random
 from django.core import exceptions
 from django.conf import settings
 from django.db import models
+import requests
 
-import validators
+import utils, validators
 
 class Class(models.Model):
     name = models.CharField(max_length=255, unique=True, validators=[validators.validate_class_name])
@@ -32,6 +33,42 @@ class Node(models.Model):
 
     def __unicode__(self):
         return "{0}".format(self.name, )
+
+    # Do additional stuff on node creation
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            # Sign certificate (if known by PuppetCA)
+            try:
+                utils.puppetca_query('PUT', 'certificate_status/%s' % self.name, data={'desired_state': 'signed'})
+            except Exception:
+                pass
+
+        # Save/create node
+        super(Node, self).save(*args, **kwargs)
+
+    # Do additional stuff on node deletion
+    def delete(self, *args, **kwargs):
+        # Deactivate in PuppetDB
+        try:
+            utils.puppetdb_deactivate_node(self.name)
+        except Exception as e:
+            raise Exception('Can\'t deactivate orphan in PuppetDB: %s' % e)
+
+        # Revoke certificate (if known by PuppetCA, only works when certificate is not in 'requested' state)
+        try:
+            utils.puppetca_query('PUT', 'certificate_status/%s' % self.name, data={'desired_state': 'revoked'})
+        except Exception as e:
+            if not isinstance(e, requests.exceptions.HTTPError) or not e.response.status_code in [404, 409]:
+                raise Exception('Can\'t revoke orphan certificate in PuppetCA: %s' % e)
+
+        # Delete certificate (if known by PuppetCA)
+        try:
+            utils.puppetca_query('DELETE', 'certificate_status/%s' % self.name)
+        except Exception as e:
+            if not isinstance(e, requests.exceptions.HTTPError) or e.response.status_code != 404:
+                raise Exception('Can\'t delete orphan in PuppetCA: %s' % e)
+
+        super(Node, self).delete(*args, **kwargs)
 
 class Parameter(models.Model):
     name = models.CharField(max_length=255, validators=[validators.validate_parameter_name])
