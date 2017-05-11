@@ -10,6 +10,9 @@ angular.module('puppetPanel')
   $scope.reports = {error: '', date: Date.now(), lastrefresh: null, data: []};
   $scope.reports.table = new NgTableParams({sorting: {start: "desc"}}, {});
 
+  // A list of filters for the status column
+  $scope.statuses = ApiService.statuses;
+
   // Get the reports
   var refresh = function() {
     $scope.reports.error = '';

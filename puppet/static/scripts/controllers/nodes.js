@@ -1,17 +1,25 @@
 'use strict';
 
 angular.module('puppetPanel')
-.controller('NodesCtrl', ['$scope', '$location', '$uibModal', '$http', '$document', '$interval', '$filter', 'ApiService', 'NgTableParams', function($scope, $location, $uibModal, $http, $document, $interval, $filter, ApiService, NgTableParams) {
+.controller('NodesCtrl', ['$scope', '$location', '$uibModal', '$http', '$document', '$interval', '$filter', 'ApiService', 'NgTableParams', 'ngTableEventsChannel', function($scope, $location, $uibModal, $http, $document, $interval, $filter, ApiService, NgTableParams, ngTableEventsChannel) {
   if(!ApiService.loggedIn()) {
   	$location.path('/login');
     return;
   }
 
   $scope.nodes = {error: '', lastrefresh: null, data: []};
-  $scope.nodes.table = new NgTableParams({sorting: {name: "asc"}}, {});
+  $scope.nodes.table = new NgTableParams({
+    sorting: {name: 'asc'},
+    filter: {
+      status: $location.search().status
+    }
+  }, {});
 
   $scope.orphans = {error: '', lastrefresh: null, data: []};
   $scope.orphans.table = new NgTableParams({sorting: {name: "asc"}}, {});
+
+  // A list of filters for the status column
+  $scope.statuses = ApiService.statuses;
 
   // Get the nodes and orphans
   var refresh = function() {
@@ -49,6 +57,17 @@ angular.module('puppetPanel')
 
   $scope.$on("$destroy", function() {
     $interval.cancel(autorefresh);
+  });
+
+  // Update search part of URL when filtering the table
+  ngTableEventsChannel.onAfterDataFiltered(function(table) {
+    $location.search('status', table.filter().status);
+  }, $scope.nodes.table);
+
+  $scope.$on('$routeUpdate', function() {
+    $scope.nodes.table.filter({
+      status: $location.search().status
+    });
   });
 
   // Common modal parent

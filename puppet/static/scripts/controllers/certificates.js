@@ -10,6 +10,15 @@ angular.module('puppetPanel')
   $scope.certificates = {error: '', data: []};
   $scope.certificates.table = new NgTableParams({sorting: {name: "asc"}}, {});
 
+  // A list of filters for the state column
+  $scope.states = function() {
+    return [
+      {id: 'requested', title: 'Requested'},
+      {id: 'signed', title: 'Signed'},
+      {id: 'revoked', title: 'Revoked'}
+    ];
+  };
+
   // Get the certificates
   $http.get(ApiService.getConfig('url') + '/certificates')
   .then(function(result) {

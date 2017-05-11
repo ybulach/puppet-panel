@@ -139,7 +139,7 @@ class NodeSerializer_Light(serializers.ModelSerializer):
     # Method fields
     def get_status(self, obj):
         node = self.get_node(obj.name)
-        return node.status if node else None
+        return node.status if node else 'unknown'
 
     def get_report_timestamp(self, obj):
         node = self.get_node(obj.name)

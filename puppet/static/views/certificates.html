@@ -27,7 +27,7 @@
           <tbody>
             <tr ng-repeat="certificate in $data">
               <td title="'Name'" sortable="'name'" filter="{name: 'text'}"><a ng-href="#/nodes/{{certificate.name}}">{{certificate.name}}</a></td>
-              <td title="'State'" sortable="'state'">
+              <td title="'State'" sortable="'state'" filter="{state: 'select'}" filter-data="states">
                 <div class="label label-info" ng-if="certificate.state == 'requested'">Requested</div>
                 <div class="label label-success" ng-if="certificate.state == 'signed'">Signed</div>
                 <div class="label label-danger" ng-if="certificate.state == 'revoked'">Revoked</div>

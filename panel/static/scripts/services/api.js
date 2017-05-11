@@ -117,6 +117,17 @@ angular.module('puppetPanel')
     }
   };
 
+  // A list of filters of nodes and reports
+  var statuses = function() {
+    return [
+      {id: 'unchanged', title: 'Success'},
+      {id: 'failed', title: 'Failed'},
+      {id: 'changed', title: 'Changed'},
+      {id: 'unreported', title: 'Unreported'},
+      {id: 'unknown', title: 'Unknown'}
+    ];
+  };
+
   // Temporary get the config from local storage
   if(localStorageService.get('authentication') !== null) {
     $http.defaults.headers.common.Authorization = localStorageService.get('authentication');
@@ -144,6 +155,7 @@ angular.module('puppetPanel')
     logout: logout,
     getConfig: getConfig,
     convertErrorsToForm: convertErrorsToForm,
-    cleanErrorsInForm: cleanErrorsInForm
+    cleanErrorsInForm: cleanErrorsInForm,
+    statuses: statuses
   };
 }]);

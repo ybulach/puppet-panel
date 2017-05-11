@@ -20,7 +20,7 @@ angular.module('puppetPanel')
       $scope.nodes.data.changed = $filter('filter')(result.data, {'status': 'changed'}, true).length;
       $scope.nodes.data.failed = $filter('filter')(result.data, {'status': 'failed'}, true).length;
       $scope.nodes.data.unreported = $filter('filter')(result.data, {'status': 'unreported'}, true).length;
-      $scope.nodes.data.unknown = $filter('filter')(result.data, {'status': null}, true).length;
+      $scope.nodes.data.unknown = $filter('filter')(result.data, {'status': 'unknown'}, true).length;
       $scope.nodes.lastrefresh = Date.now();
     }, function(reason) {
       $scope.nodes.error = 'Error while loading nodes informations.';

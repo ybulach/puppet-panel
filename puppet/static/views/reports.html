@@ -27,12 +27,12 @@
             <tr ng-repeat="report in $data">
               <td title="'Transaction'" sortable="'transaction'"><a ng-href="#/reports/{{report.transaction}}">{{report.transaction}}</a></td>
               <td title="'Node'" sortable="'node'" filter="{node: 'text'}"><a ng-href="#/nodes/{{report.node}}">{{report.node}}</a></td>
-              <td title="'Status'" sortable="'status'">
+              <td title="'Status'" sortable="'status'" filter="{status: 'select'}" filter-data="statuses">
                 <div class="label label-success" ng-if="report.status == 'unchanged'">Success</div>
                 <div class="label label-danger" ng-if="report.status == 'failed'">Failed</div>
                 <div class="label label-info" ng-if="report.status == 'changed'">Changed</div>
                 <div class="label label-warning" ng-if="report.status == 'unreported'">Unreported</div>
-                <div class="label label-default" ng-if="!report.status">Unknown</div>
+                <div class="label label-default" ng-if="report.status == 'unknown'">Unknown</div>
               </td>
               <td title="'Start time'" sortable="'start'">{{report.start | date: 'medium'}}</td>
               <td title="'End time'" sortable="'end'">{{report.end | date: 'medium'}}</td>

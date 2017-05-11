@@ -31,18 +31,18 @@
           <tbody>
             <tr ng-repeat="node in $data">
               <td title="'Hostname'" sortable="'name'" filter="{name: 'text'}"><a ng-href="#/nodes/{{node.name}}">{{node.name}}</a></td>
-              <td title="'Status'" sortable="'status'">
+              <td title="'Status'" sortable="'status'" filter="{status: 'select'}" filter-data="statuses">
                 <div class="label label-success" ng-if="node.status == 'unchanged'">Success</div>
                 <div class="label label-danger" ng-if="node.status == 'failed'">Failed</div>
                 <div class="label label-info" ng-if="node.status == 'changed'">Changed</div>
                 <div class="label label-warning" ng-if="node.status == 'unreported'">Unreported</div>
-                <div class="label label-default" ng-if="!node.status">Unknown</div>
+                <div class="label label-default" ng-if="node.status == 'unknown'">Unknown</div>
               </td>
               <td title="'Last report'" sortable="'report_timestamp'">{{node.report_timestamp | date: 'medium'}}</td>
               <td title="'Last catalog'" sortable="'catalog_timestamp'">{{node.catalog_timestamp | date: 'medium'}}</td>
               <td title="'Last facts'" sortable="'facts_timestamp'">{{node.facts_timestamp | date: 'medium'}}</td>
             </tr>
-            <tr ng-if="!nodes.table.data.length && nodes.lastrefresh">
+            <tr ng-if="!nodes.data.length && nodes.lastrefresh">
               <td colspan="5">No node. Add one to see it here !</td>
             </tr>
             <tr ng-if="!nodes.lastrefresh && !nodes.error">
