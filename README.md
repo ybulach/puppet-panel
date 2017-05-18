@@ -2,6 +2,8 @@
 
 A Puppet dashboard+ENC with encrypted parameters
 
+![Homepage](/screenshot.png?raw=true "Homepage")
+
 ## Presentation
 This project aims to provide a panel/dashboard to ease day to day administration of Puppet:
 
