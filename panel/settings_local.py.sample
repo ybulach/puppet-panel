@@ -26,13 +26,13 @@ DATABASES = {
 
 # Puppet
 
-PUPPET_ENCRYPTION_PUBKEY = 'puppet.pub.pem'
+PUPPET_ENCRYPTION_PUBKEY = 'puppetpanel-encryption.pub'
 
-PUPPET_CA_CRT = 'ca.pem'
+PUPPET_CA_CRT = 'ca.crt'
 
-PUPPET_CLIENT_CRT = 'panel.puppet.domain.tld.crt.pem'
+PUPPET_CLIENT_CRT = 'puppetpanel-client.crt'
 
-PUPPET_CLIENT_KEY = 'panel.puppet.domain.tld.key.pem'
+PUPPET_CLIENT_KEY = 'puppetpanel-client.key'
 
 
 # Puppet DB
