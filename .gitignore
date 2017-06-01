@@ -4,5 +4,6 @@
 *.pem
 *.crt
 *.key
+*.pub
 settings_local.py
 bower_components/
