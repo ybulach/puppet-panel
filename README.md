@@ -229,8 +229,10 @@ Then define the hostname of your PuppetCA server. The port of PuppetCA can't be 
     # Puppet CA
     PUPPETCA_HOST = 'ca.puppet.domain.tld'
 
-### Encryption
-For this configuration variables, we are considering the names of SSL keys/certificates shown in the installation part:
+### Encryption (recommended)
+**INFO**: if no encryption is available, PuppetPanel will still work with plain parameters.
+
+For encryption configuration, we are considering the names of SSL keys/certificates shown in the installation part:
 
     # Puppet
     PUPPET_ENCRYPTION_PUBKEY = 'puppetpanel-encryption.pub'
@@ -243,9 +245,9 @@ In order to use LDAP authentication, you need to install those dependencies (ins
 
     pip install python-ldap django-auth-ldap
 
-Add this configuration to your `panel/settings_local.py` (tested with OpenLDAP) and change it according to your needs:
+Add this configuration to your `panel/settings_local.py` (here for OpenLDAP) and change it according to your needs:
 
-    # Authentication
+    # OpenLDAP
 
     AUTHENTICATION_BACKENDS = (
         'django_auth_ldap.backend.LDAPBackend',
@@ -257,8 +259,8 @@ Add this configuration to your `panel/settings_local.py` (tested with OpenLDAP) 
 
     AUTH_LDAP_SERVER_URI = "ldap://ldap.domain.tld"
 
-    AUTH_LDAP_BIND_DN = "cn=admin,dc=domain,dc=tld"
-    AUTH_LDAP_BIND_PASSWORD = "root"
+    #AUTH_LDAP_BIND_DN = "cn=admin,dc=domain,dc=tld"
+    #AUTH_LDAP_BIND_PASSWORD = "root"
 
     AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=people,dc=domain,dc=tld", ldap.SCOPE_SUBTREE, "(uid=%(user)s)")
 
@@ -273,4 +275,43 @@ Add this configuration to your `panel/settings_local.py` (tested with OpenLDAP) 
         "is_superuser": "cn=PUPPET-Users,ou=groups,dc=domain,dc=tld"
     }
 
-Here, users from `ou=people,dc=domain,dc=tld` are imported if they are in the group `cn=PUPPET-Users,ou=groups,dc=domain,dc=tld`. Every user is by default set to active/staff/superadmin.
+Here is an example for Active Directory:
+
+    # Active Directory
+
+    AUTHENTICATION_BACKENDS = (
+        'django_auth_ldap.backend.LDAPBackend',
+        'django.contrib.auth.backends.ModelBackend',
+    )
+
+    import ldap
+    from django_auth_ldap.config import LDAPSearch, NestedActiveDirectoryGroupType
+
+    AUTH_LDAP_SERVER_URI = "ldap://ad.domain.tld"
+
+    AUTH_LDAP_BIND_DN = "cn=puppet,ou=Users,dc=domain,dc=tld"
+    AUTH_LDAP_BIND_PASSWORD = "root"
+
+    AUTH_LDAP_USER_SEARCH = LDAPSearch("OU=Users,DC=domain,dc=tld", ldap.SCOPE_SUBTREE, "(sAMAccountName=%(user)s)")
+
+    AUTH_LDAP_GROUP_SEARCH = LDAPSearch("ou=Groups,DC=domain,dc=tld", ldap.SCOPE_SUBTREE, "(objectClass=group)")
+    AUTH_LDAP_GROUP_TYPE = NestedActiveDirectoryGroupType()
+
+    AUTH_LDAP_REQUIRE_GROUP = "CN=PUPPET-Users,ou=Groups,DC=domain,dc=tld"
+
+    #AUTH_LDAP_CACHE_GROUPS = True
+    #AUTH_LDAP_GROUP_CACHE_TIMEOUT = 300
+
+    AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+        "is_active": "CN=PUPPET-Users,ou=Groups,DC=domain,dc=tld",
+        "is_staff": "CN=PUPPET-Users,ou=Groups,DC=domain,dc=tld",
+        "is_superuser": "CN=PUPPET-Users,ou=Groups,DC=domain,dc=tld"
+    }
+
+    AUTH_LDAP_USER_ATTR_MAP = {
+        "first_name": "givenName",
+        "last_name": "sn",
+        "email": "mail"
+    }
+
+Here, users from `ou=people,dc=domain,dc=tld` (or `OU=Users,DC=domain,dc=tld` in Active Directory) are imported if they are in the group `cn=PUPPET-Users,ou=groups,dc=domain,dc=tld`. Every user is by default set to active/staff/superadmin.
