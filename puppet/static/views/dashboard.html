@@ -106,7 +106,7 @@
     <div class="col-lg-2">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <div class="huge text-right">{{nodes.total}}</div>
+          <div class="huge text-right">{{nodes.data.total}}</div>
         </div>
         <a href="#/nodes">
           <div class="panel-footer">
@@ -120,11 +120,11 @@
 
     <div class="col-lg-12">
       <uib-progress>
-        <uib-bar type="success" value="nodes.data.unchanged/nodes.total*100">Unchanged</uib-bar>
-        <uib-bar type="info" value="nodes.data.changed/nodes.total*100">Changed</uib-bar>
-        <uib-bar type="danger" value="nodes.data.failed/nodes.total*100">Failed</uib-bar>
-        <uib-bar type="warning" value="nodes.data.unreported/nodes.total*100">Unreported</uib-bar>
-        <uib-bar type="gray" value="nodes.data.unknown/nodes.total*100">Unknown</uib-bar>
+        <uib-bar type="success" value="nodes.data.unchanged/nodes.data.total*100">Unchanged</uib-bar>
+        <uib-bar type="info" value="nodes.data.changed/nodes.data.total*100">Changed</uib-bar>
+        <uib-bar type="danger" value="nodes.data.failed/nodes.data.total*100">Failed</uib-bar>
+        <uib-bar type="warning" value="nodes.data.unreported/nodes.data.total*100">Unreported</uib-bar>
+        <uib-bar type="gray" value="nodes.data.unknown/nodes.data.total*100">Unknown</uib-bar>
       </uib-progress>
     </div>
   </div>

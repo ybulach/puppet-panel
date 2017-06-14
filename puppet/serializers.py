@@ -192,6 +192,15 @@ class OrphanSerializer(serializers.Serializer):
     name = serializers.CharField(allow_blank=False, trim_whitespace=False, required=True)
     source = serializers.CharField(allow_blank=False, trim_whitespace=False, required=True)
 
+# Nodes status
+class StatusSerializer(serializers.Serializer):
+    unchanged = serializers.IntegerField(min_value=0, required=True)
+    changed = serializers.IntegerField(min_value=0, required=True)
+    failed = serializers.IntegerField(min_value=0, required=True)
+    unreported = serializers.IntegerField(min_value=0, required=True)
+    unknown = serializers.IntegerField(min_value=0, required=True)
+    total = serializers.IntegerField(min_value=0, required=True)
+
 # Certificates
 class CertificateSerializer_Read(serializers.Serializer):
     name = serializers.CharField(allow_blank=False, trim_whitespace=False)

@@ -28,14 +28,9 @@ angular.module('puppetPanel')
   var refresh = function() {
     $scope.nodes.error = '';
 
-    $http.get(ApiService.getConfig('url') + '/nodes')
+    $http.get(ApiService.getConfig('url') + '/status')
     .then(function(result) {
-      $scope.nodes.total = result.data.length;
-      $scope.nodes.data.unchanged = $filter('filter')(result.data, {'status': 'unchanged'}, true).length;
-      $scope.nodes.data.changed = $filter('filter')(result.data, {'status': 'changed'}, true).length;
-      $scope.nodes.data.failed = $filter('filter')(result.data, {'status': 'failed'}, true).length;
-      $scope.nodes.data.unreported = $filter('filter')(result.data, {'status': 'unreported'}, true).length;
-      $scope.nodes.data.unknown = $filter('filter')(result.data, {'status': 'unknown'}, true).length;
+      $scope.nodes.data = result.data;
       $scope.nodes.lastrefresh = Date.now();
     }, function(reason) {
       $scope.nodes.error = 'Error while loading nodes informations.';

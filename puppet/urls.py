@@ -27,6 +27,7 @@ router.register(r'nodes', views.NodeViewSet)
 router.register(r'orphans', views.OrphanViewSet, base_name='orphans')
 router.register(r'parameters', views.ParameterViewSet, base_name='parameters')
 router.register(r'reports', views.ReportViewSet, base_name='reports')
+router.register(r'status', views.StatusViewSet, base_name='status')
 
 groups_router = routers.NestedSimpleRouter(router, r'groups', lookup='group', trailing_slash=False)
 groups_router.register(r'parameters', views.GroupParameterViewSet, base_name='group-parameters')

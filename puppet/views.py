@@ -429,6 +429,28 @@ class OrphanViewSet(mixins.ListModelMixin, mixins.DestroyModelMixin, viewsets.Ge
         # Return result
         return response.Response(status=status.HTTP_204_NO_CONTENT)
 
+# Nodes status
+class StatusViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    serializer_class = serializers.StatusSerializer
+
+    # List orphan nodes
+    def list(self, request, *args, **kwargs):
+        # Get the node with their status
+        nodes = serializers.NodeSerializer_Light(models.Node.objects.all(), many=True).data
+
+        # Get a count of each status
+        status = {'unchanged': 0, 'changed': 0, 'failed': 0, 'unreported': 0, 'unknown': 0, 'total': 0}
+        for node in nodes:
+            if node['status'] in status:
+                status[node['status']] += 1
+            else:
+                status['unknown'] += 1
+            status['total'] += 1
+
+        # Return result
+        serializer = self.get_serializer(status)
+        return response.Response(serializer.data)
+
 # Certificates
 class CertificateViewSet(mixins.ListModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
     lookup_field = 'name'
