@@ -29,7 +29,7 @@
 
   <div class="row" ng-if="nodes.lastrefresh">
     <div class="col-lg-2">
-      <div class="panel panel-green">
+      <div class="panel" ng-class="{'panel-green': nodes.data.unchanged, 'panel-default': !nodes.data.unchanged}">
         <div class="panel-heading">
           <div class="huge text-right">{{nodes.data.unchanged}}</div>
         </div>
@@ -44,7 +44,7 @@
     </div>
 
     <div class="col-lg-2">
-      <div class="panel panel-primary">
+      <div class="panel" ng-class="{'panel-primary': nodes.data.changed, 'panel-default': !nodes.data.changed}">
         <div class="panel-heading">
           <div class="huge text-right">{{nodes.data.changed}}</div>
         </div>
@@ -59,7 +59,7 @@
     </div>
 
     <div class="col-lg-2">
-      <div class="panel panel-red">
+      <div class="panel" ng-class="{'panel-red': nodes.data.failed, 'panel-default': !nodes.data.failed}">
         <div class="panel-heading">
           <div class="huge text-right">{{nodes.data.failed}}</div>
         </div>
@@ -74,7 +74,7 @@
     </div>
 
     <div class="col-lg-2">
-      <div class="panel panel-yellow">
+      <div class="panel" ng-class="{'panel-yellow': nodes.data.unreported, 'panel-default': !nodes.data.unreported}">
         <div class="panel-heading">
           <div class="huge text-right">{{nodes.data.unreported}}</div>
         </div>
@@ -89,7 +89,7 @@
     </div>
 
     <div class="col-lg-2">
-      <div class="panel panel-grey">
+      <div class="panel" ng-class="{'panel-grey': nodes.data.unknown, 'panel-default': !nodes.data.unknown}">
         <div class="panel-heading">
           <div class="huge text-right">{{nodes.data.unknown}}</div>
         </div>
@@ -104,7 +104,7 @@
     </div>
 
     <div class="col-lg-2">
-      <div class="panel panel-default">
+      <div class="panel panel-info">
         <div class="panel-heading">
           <div class="huge text-right">{{nodes.data.total}}</div>
         </div>
@@ -121,7 +121,7 @@
     <div class="col-lg-12">
       <uib-progress>
         <uib-bar type="success" value="nodes.data.unchanged/nodes.data.total*100">Unchanged</uib-bar>
-        <uib-bar type="info" value="nodes.data.changed/nodes.data.total*100">Changed</uib-bar>
+        <uib-bar type="default" value="nodes.data.changed/nodes.data.total*100">Changed</uib-bar>
         <uib-bar type="danger" value="nodes.data.failed/nodes.data.total*100">Failed</uib-bar>
         <uib-bar type="warning" value="nodes.data.unreported/nodes.data.total*100">Unreported</uib-bar>
         <uib-bar type="gray" value="nodes.data.unknown/nodes.data.total*100">Unknown</uib-bar>
