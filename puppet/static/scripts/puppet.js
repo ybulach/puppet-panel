@@ -55,11 +55,6 @@ angular.module('puppetPanel')
       controller: 'ClassesCtrl',
       reloadOnSearch: false
     })
-    .when('/classes/:name', {
-      templateUrl: 'static/views/class.html',
-      controller: 'ClassCtrl',
-      reloadOnSearch: false
-    })
 
     // Parameters
     .when('/parameters', {

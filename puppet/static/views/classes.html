@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-lg-12">
       <h1 class="page-header">
-        <button type="button" class="btn btn-success pull-right" ng-click="classes.create()"><span class="glyphicon glyphicon-plus"></span> Create a class</button>
+        <button type="button" class="btn btn-success pull-right" ng-click="classes.edit(undefined)"><span class="glyphicon glyphicon-plus"></span> Create a class</button>
         Classes
       </h1>
 
@@ -29,10 +29,14 @@
         <table class="table table-hover table-striped" ng-table="classes.table" show-filter="true">
           <tbody>
             <tr ng-repeat="class in $data">
-              <td title="'Name'" sortable="'name'" filter="{name: 'text'}"><a ng-href="#/classes/{{class.name}}">{{class.name}}</a></td>
+              <td title="'Name'" sortable="'name'" filter="{name: 'text'}">{{class.name}}</td>
+              <td class="text-right">
+                <button type="button" class="btn btn-default" ng-click="classes.edit(class)"><span class="glyphicon glyphicon-pencil"></span> Edit</button>
+                <button type="button" class="btn btn-danger" ng-click="classes.delete(class)"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+              </td>
             </tr>
             <tr ng-if="!classes.table.data.length">
-              <td>No class. Add one to see it here !</td>
+              <td colspan="2">No class. Add one to see it here !</td>
             </tr>
           </tbody>
         </table>
