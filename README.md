@@ -98,6 +98,7 @@ To install PuppetPanel on production server, a specific user and a virtualenv ar
     git clone https://github.com/ybulach/puppet-panel .
     pip install -r requirements
     bower install
+    python manage.py collectstatic
 
 If you want to activate virtualenv every time you `su` as this user:
 
@@ -166,7 +167,10 @@ To upgrade an existing PuppetPanel installation, you need to `su` as the specifi
     cd /opt/puppet-panel/app
     git pull
     pip install -r requirements.txt --upgrade
+    bower update
     python manage.py migrate
+    rm -rf static
+    python manage.py collectstatic
 
 You may need to reload `wsgi` to make sure changes are taken in account:
 
