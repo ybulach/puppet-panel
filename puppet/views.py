@@ -219,16 +219,23 @@ class NodeEncViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
             parent_classes, parent_parameters, past_objects = self.iter_object(parent, past_objects)
 
             # Current parent classes and parameters
-            for cls in parent_classes:
-                if not cls in classes:
-                    classes.append(cls)
-
-            for name, parameter in parent_parameters.iteritems():
-                if not name in parameters:
-                    parameters[name] = parameter
+            self.dedup_classes(classes, parent_classes)
+            self.dedup_parameters(parameters, parent_parameters)
 
         # Return result
         return (classes, parameters, past_objects)
+
+    # Ensure classes are not duplicated in result
+    def dedup_classes(self, current_classes, new_classes):
+        for cls in new_classes:
+            if not cls in current_classes:
+                current_classes.append(cls)
+
+    # Ensure parameters are not duplicated in result
+    def dedup_parameters(self, current_parameters, new_parameters):
+        for name, parameter in new_parameters.iteritems():
+            if not name in current_parameters:
+                current_parameters[name] = parameter
 
     # Get the ENC datas on a node (including recursive lookup of parameters/classes)
     def list(self, request, *args, **kwargs):
@@ -237,6 +244,18 @@ class NodeEncViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
         # Iter the node and the groups
         classes, parameters, past_objects = self.iter_object(node, [])
+        self.dedup_classes(classes, classes)
+        self.dedup_parameters(parameters, parameters)
+
+        # Iter the default groups
+        for group in models.Group.objects.filter(default=True):
+            group_classes, group_parameters, past_objects = self.iter_object(group, past_objects)
+            self.dedup_classes(classes, group_classes)
+            self.dedup_parameters(parameters, group_parameters)
+
+        # Iter the default classes
+        default_classes = models.Class.objects.filter(default=True)
+        self.dedup_classes(classes, default_classes)
 
         # Return result
         serializer = self.get_serializer({'classes': classes, 'parameters': parameters.values()})

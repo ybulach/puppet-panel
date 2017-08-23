@@ -27,7 +27,10 @@
         <table class="table table-hover table-striped" ng-table="groups.table" show-filter="true">
           <tbody>
             <tr ng-repeat="group in $data">
-              <td title="'Name'" sortable="'name'" filter="{name: 'text'}"><a ng-href="#/groups/{{group.name}}">{{group.name}}</a></td>
+              <td title="'Name'" sortable="'name'" filter="{name: 'text'}">
+                <a ng-href="#/groups/{{group.name}}">{{group.name}}</a>
+                <span class="label label-info" ng-if="group.default">Default</span>
+              </td>
             </tr>
             <tr ng-if="!groups.table.data.length">
               <td>No group. Add one to see it here !</td>

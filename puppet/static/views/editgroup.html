@@ -11,6 +11,13 @@
       <span class="help-block" ng-if="form.name.error">{{form.name.error}}</span>
     </div>
 
+    <div class="form-group" ng-class="{'has-error': form.default.error}">
+      <label for="default">
+        <input type="checkbox" name="default" id="default" ng-model="group.default"> Default (add to all nodes)
+      </label>
+      <span class="help-block" ng-if="form.default.error">{{form.default.error}}</span>
+    </div>
+
     <div class="form-group" ng-class="{'has-error': form.classes.error}">
       <label for="classes">Classes</label>
       <ui-select name="classes" ng-model="group.classes" close-on-select="false" multiple>

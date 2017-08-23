@@ -26,6 +26,7 @@ import utils, validators
 
 class Class(models.Model):
     name = models.CharField(max_length=255, unique=True, validators=[validators.validate_class_name])
+    default = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = 'Classes'
@@ -35,6 +36,7 @@ class Class(models.Model):
 
 class Group(models.Model):
     name = models.CharField(max_length=255, unique=True, validators=[validators.validate_group_name])
+    default = models.BooleanField(default=False)
     parents = models.ManyToManyField('Group', blank=True)
     classes = models.ManyToManyField(Class, blank=True)
 

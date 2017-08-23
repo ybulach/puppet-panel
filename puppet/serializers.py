@@ -42,7 +42,7 @@ class ValidatedSerializer(serializers.ModelSerializer):
 class ClassSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Class
-        fields = ('name', )
+        fields = ('name', 'default')
 
 # Reports
 class ReportSerializer_Light(serializers.Serializer):
@@ -104,7 +104,7 @@ class GroupSerializer_Light(serializers.ModelSerializer):
 
     class Meta:
         model = models.Group
-        fields = ('name', 'parents', 'classes')
+        fields = ('name', 'default', 'parents', 'classes')
         read_only_fields = ()
 
 class GroupSerializer_Full(GroupSerializer_Light):
