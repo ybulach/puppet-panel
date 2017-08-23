@@ -61,6 +61,7 @@ class ReportSerializer_Light(serializers.Serializer):
 class ReportSerializer_Full(ReportSerializer_Light):
     logs = serializers.SerializerMethodField()
     events = serializers.SerializerMethodField()
+    metrics = serializers.SerializerMethodField()
 
     # Method fields
     def get_logs(self, obj):
@@ -78,6 +79,14 @@ class ReportSerializer_Full(ReportSerializer_Light):
            'message': event.item['message'],
            'status': event.status
         } for event in obj.events()]
+
+    def get_metrics(self, obj):
+        metrics = {}
+        for metric in obj.metrics:
+            if not metric['category'] in metrics:
+                metrics[metric['category']] = []
+            metrics[metric['category']].append({'name': metric['name'], 'value': metric['value']})
+        return metrics
 
 # Parameters (used in global listing)
 class ParameterSerializer(serializers.Serializer):

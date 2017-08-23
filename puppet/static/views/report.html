@@ -48,12 +48,6 @@
             <small><em>Agent version</em></small><br>
             <span>{{report.data.agent_version}}</span>
           </p>
-        </div>
-      </div>
-
-      <div class="panel panel-default">
-        <div class="panel-heading">Execution</div>
-        <div class="panel-body">
           <p>
             <small><em>Started at</em></small><br>
             <span>{{report.data.start | date: 'medium'}}</span>
@@ -72,6 +66,7 @@
 
     <div class="col-lg-8">
       <h2>Events</h2>
+
       <div class="list-group">
         <div ng-repeat="event in report.data.events | orderBy: 'time'" class="list-group-item">
           <div class="list-group-item-header">
@@ -112,6 +107,76 @@
         </div>
         <div class="list-group-item" ng-if="!report.data.logs.length">
           <p class="list-group-item-text">No log found.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" ng-if="loaded && !report.error">
+    <div class="col-lg-12">
+      <h2>Metrics</h2>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">Resources</div>
+            <div class="panel-body table-reponsive">
+              <table class="table table-condensed table-striped">
+                <tbody>
+                  <tr ng-repeat="metric in report.data.metrics.resources">
+                    <td>{{metric.name}}</td>
+                    <td>{{metric.value}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">Time</div>
+            <div class="panel-body table-reponsive">
+              <table class="table table-condensed table-striped">
+                <tbody>
+                  <tr ng-repeat="metric in report.data.metrics.time">
+                    <td>{{metric.name}}</td>
+                    <td>{{metric.value | number: 4}} s</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">Changes</div>
+            <div class="panel-body table-reponsive">
+              <table class="table table-condensed table-striped">
+                <tbody>
+                  <tr ng-repeat="metric in report.data.metrics.changes">
+                    <td>{{metric.name}}</td>
+                    <td>{{metric.value}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading">Events</div>
+            <div class="panel-body table-reponsive">
+              <table class="table table-condensed table-striped">
+                <tbody>
+                  <tr ng-repeat="metric in report.data.metrics.events">
+                    <td>{{metric.name}}</td>
+                    <td>{{metric.value}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
