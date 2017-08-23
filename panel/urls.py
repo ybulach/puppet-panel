@@ -25,21 +25,23 @@ import views
 
 api_router = routers.SimpleRouter(trailing_slash=False)
 api_router.register(r'apikeys', django_rest_apikey.views.APIKeyViewSet, base_name='apikeys')
+api_router.register(r'users', views.UserViewSet, base_name='users')
+
+user_router = routers.NestedSimpleRouter(api_router, r'users', lookup='user', trailing_slash=False)
+user_router.register(r'apikeys', views.UserApiKeyViewSet, base_name='user-apikeys')
+user_router.register(r'password', views.UserPasswordViewSet, base_name='user-password')
 
 urlpatterns = [
 	# REST API
     url(r'^api/', include(api_router.urls)),
+    url(r'^api/', include(user_router.urls)),
     url(r'^api/', include('puppet.urls')),
 
     # API authentication (from Djoser, added here to remove trailing slashes)
     url(r'^api/login$', djoser.views.LoginView.as_view(), name='login'),
     url(r'^api/logout$', djoser.views.LogoutView.as_view(), name='logout'),
     url(r'^api/account$', djoser.views.UserView.as_view(), name='user'),
-    #url(r'^api/register$', djoser.views.RegistrationView.as_view(), name='register'),
-    #url(r'^api/activate$', djoser.views.ActivationView.as_view(), name='activate'),
     url(r'^api/password$', djoser.views.SetPasswordView.as_view(), name='set_password'),
-    #url(r'^api/password/reset$', djoser.views.PasswordResetView.as_view(), name='password_reset'),
-    #url(r'^api/password/reset/confirm$', djoser.views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
 
     # API documentation
     url(r'^doc/', get_swagger_view(title='Hosting Panel API')),

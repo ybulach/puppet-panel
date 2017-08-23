@@ -47,6 +47,17 @@ angular.module('puppetPanel', [
       controller: 'AccountCtrl'
     })
 
+    // Users administration
+    .when('/users', {
+      templateUrl: 'static/views/users.html',
+      controller: 'UsersCtrl'
+    })
+    .when('/users/:username', {
+      templateUrl: 'static/views/user.html',
+      controller: 'UserCtrl',
+      reloadOnSearch: false
+    })
+
     // Redirect to default
     .otherwise({
       redirectTo: '/'

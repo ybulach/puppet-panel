@@ -1,0 +1,49 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class="page-header">
+        <button type="button" class="btn btn-success pull-right" ng-click="users.create()"><span class="glyphicon glyphicon-plus"></span> Create a user</button>
+        Users
+      </h1>
+
+      <ol class="breadcrumb">
+        <li><a href="#/">Home</a></li>
+        <li class="active">Users</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="modal-parent"></div>
+
+  <div class="row" ng-if="!loaded">
+    <div class="col-lg-12">Loading...</div>
+  </div>
+
+  <div class="row" ng-if="loaded">
+    <div class="col-lg-12">
+      <div ng-if="users.error" class="alert alert-danger">{{users.error}}</div>
+
+      <div class="clearfix"></div>
+
+      <div class="table-responsive">
+        <table class="table table-hover table-striped" ng-table="users.table" show-filter="true">
+          <tbody>
+            <tr ng-repeat="user in $data">
+              <td title="'Username'" sortable="'username'" filter="{username: 'text'}"><a ng-href="#/users/{{user.username}}">{{user.username}}</a></td>
+              <td title="'Status'" sortable="'is_active'">
+                <span class="label label-success" ng-if="user.is_active">Enabled</span>
+                <span class="label label-danger" ng-if="!user.is_active">Disabled</span>
+              </td>
+              <td title="'First name'" sortable="'first_name'" filter="{first_name: 'text'}">{{user.first_name}}</td>
+              <td title="'Last name'" sortable="'last_name'" filter="{last_name: 'text'}">{{user.last_name}}</td>
+              <td title="'Email'" sortable="'email'" filter="{email: 'text'}">{{user.email}}</td>
+            </tr>
+            <tr ng-if="!users.table.data.length">
+              <td colspan="5">No user. Add one to see it here !</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
