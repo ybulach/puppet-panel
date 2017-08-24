@@ -16,7 +16,7 @@
 'use strict';
 
 angular.module('puppetPanel')
-.controller('ClassesCtrl', ['$scope', '$location', '$uibModal', '$http', '$document', '$filter', 'ApiService', 'NgTableParams', function($scope, $location, $uibModal, $http, $document, $filter, ApiService, NgTableParams) {
+.controller('ClassesCtrl', ['$scope', '$location', '$uibModal', '$http', '$document', '$filter', '$routeParams', 'ApiService', 'NgTableParams', function($scope, $location, $uibModal, $http, $document, $filter, $routeParams, ApiService, NgTableParams) {
   if(!ApiService.loggedIn()) {
   	$location.path('/login');
     return;
@@ -30,6 +30,14 @@ angular.module('puppetPanel')
   .then(function(result) {
     $scope.classes.data = result.data;
     $scope.classes.table.settings({dataset: $scope.classes.data});
+
+    // Open modal if needed
+    if($routeParams.name) {
+      var filtered = $filter('filter')($scope.classes.data, {'name': $routeParams.name}, true);
+      if(filtered.length) {
+        $scope.classes.edit(filtered[0]);
+      }
+    }
   }, function(reason) {
     $scope.classes.error = 'Error while loading classes informations.';
   });
@@ -47,6 +55,10 @@ angular.module('puppetPanel')
 
   // Add/edit and delete classes
   $scope.classes.edit = function(cls) {
+    if(cls !== undefined) {
+      $location.path('/classes/' + cls.name, false);
+    }
+
     var modalInstance = $uibModal.open({
       templateUrl: 'static/views/editclass.html',
       controller: 'EditClassCtrl',
@@ -69,6 +81,10 @@ angular.module('puppetPanel')
       }
 
       $scope.classes.table.settings({dataset: $scope.classes.data});
+    });
+
+    modalInstance.closed.then(function() {
+      $location.path('/classes', false);
     });
   };
 

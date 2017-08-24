@@ -63,3 +63,20 @@ angular.module('puppetPanel', [
       redirectTo: '/'
     });
 }]);
+
+// Allow $location.path change without reloading, adding an extra parameter
+// Taken from: https://www.consolelog.io/angularjs-change-path-without-reloading
+angular.module('puppetPanel')
+.run(['$route', '$rootScope', '$location', function ($route, $rootScope, $location) {
+  var original = $location.path;
+  $location.path = function (path, reload) {
+    if (reload === false) {
+      var lastRoute = $route.current;
+      var un = $rootScope.$on('$locationChangeSuccess', function () {
+        $route.current = lastRoute;
+        un();
+      });
+    }
+    return original.apply($location, [path]);
+  };
+}])

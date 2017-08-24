@@ -42,7 +42,7 @@
       <div class="panel panel-default">
         <div class="panel-heading">Classes</div>
         <div class="panel-body">
-          <span ng-repeat="class in group.data.classes"><a class="label label-default" href="#/classes">{{class}}</a> </span>
+          <span ng-repeat="class in group.data.classes"><a class="label label-default" ng-href="#/classes/{{class}}">{{class}}</a> </span>
           <span ng-if="!group.data.classes.length">None</span>
         </div>
       </div>

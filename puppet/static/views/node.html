@@ -67,7 +67,7 @@
       <div class="panel panel-default">
         <div class="panel-heading">Classes</div>
         <div class="panel-body">
-          <span ng-repeat="class in node.data.classes"><a class="label label-default" href="#/classes">{{class}}</a> </span>
+          <span ng-repeat="class in node.data.classes"><a class="label label-default" ng-href="#/classes/{{class}}">{{class}}</a> </span>
           <span ng-if="!node.data.classes.length">None</span>
         </div>
       </div>
