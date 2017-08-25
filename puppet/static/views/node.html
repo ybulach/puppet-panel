@@ -46,6 +46,18 @@
            Status
         </div>
         <div class="panel-body">
+          <div class="pull-right">
+            <span class="label label-info" ng-if="node.data.certificate.state == 'requested'">Requested</span>
+            <span class="label label-success" ng-if="node.data.certificate.state == 'signed'">Signed</span>
+            <span class="label label-danger" ng-if="node.data.certificate.state == 'revoked'">Revoked</span>
+            <span class="label label-default" ng-if="!node.data.certificate">Unknown</span>
+          </div>
+          <p>
+            <small><em>PuppetCA certificate</em></small><br>
+            <span ng-if="node.data.certificate"><a ng-href="#/certificates/{{node.data.certificate.name}}">{{node.data.certificate.name}}</a></span>
+            <span ng-if="!node.data.certificate">Unknown</span>
+          </p>
+
           <p>
             <small><em>Last report</em></small><br>
             <span>{{node.data.report_timestamp | date: 'medium'}}</span>

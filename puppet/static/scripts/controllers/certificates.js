@@ -16,7 +16,7 @@
 'use strict';
 
 angular.module('puppetPanel')
-.controller('CertificatesCtrl', ['$scope', '$location', '$uibModal', '$http', '$document', '$filter', 'ApiService', 'NgTableParams', function($scope, $location, $uibModal, $http, $document, $filter, ApiService, NgTableParams) {
+.controller('CertificatesCtrl', ['$scope', '$location', '$uibModal', '$http', '$document', '$filter', '$routeParams', 'ApiService', 'NgTableParams', function($scope, $location, $uibModal, $http, $document, $filter, $routeParams, ApiService, NgTableParams) {
   if(!ApiService.loggedIn()) {
   	$location.path('/login');
     return;
@@ -39,6 +39,14 @@ angular.module('puppetPanel')
   .then(function(result) {
     $scope.certificates.data = result.data;
     $scope.certificates.table.settings({dataset: $scope.certificates.data});
+
+    // Open modal if needed
+    if($routeParams.name) {
+      var filtered = $filter('filter')($scope.certificates.data, {'name': $routeParams.name}, true);
+      if(filtered.length) {
+        $scope.certificates.edit(filtered[0]);
+      }
+    }
   }, function(reason) {
     $scope.certificates.error = 'Error while loading certificates informations.';
   });
@@ -55,6 +63,10 @@ angular.module('puppetPanel')
 
   // Edit and delete certificates
   $scope.certificates.edit = function(certificate) {
+    if(certificate != undefined) {
+      $location.path('/certificates/' + certificate.name, false);
+    }
+
     var modalInstance = $uibModal.open({
       templateUrl: 'static/views/editcertificate.html',
       controller: 'EditCertificateCtrl',
@@ -73,6 +85,10 @@ angular.module('puppetPanel')
 
       $scope.certificates.table.settings({dataset: $scope.certificates.data});
       $scope.certificates.table.page(page);
+    });
+
+    modalInstance.closed.then(function() {
+      $location.path('/certificates', false);
     });
   };
 

@@ -182,15 +182,23 @@ class NodeSerializer_Full(NodeSerializer_Light):
     groups = serializers.SlugRelatedField(slug_field='name', queryset=models.Group.objects.all(), many=True, required=False)
     parameters = NodeParameterSerializer(many=True, read_only=True)
     reports = serializers.SerializerMethodField()
+    certificate = serializers.SerializerMethodField()
 
     class Meta(NodeSerializer_Light.Meta):
-        fields = NodeSerializer_Light.Meta.fields + ('groups', 'classes', 'parameters', 'reports')
-        read_only_fields = NodeSerializer_Light.Meta.read_only_fields + ('parameters', 'reports')
+        fields = NodeSerializer_Light.Meta.fields + ('groups', 'classes', 'parameters', 'reports', 'certificate')
+        read_only_fields = NodeSerializer_Light.Meta.read_only_fields + ('parameters', 'reports', 'certificate')
 
     # Method fields
     def get_reports(self, obj):
         node = self.get_node(obj.name)
         return ReportSerializer_Light(node.reports(), many=True).data if node else []
+
+    def get_certificate(self, obj):
+        try:
+            result = utils.puppetca_query('GET', 'certificate_status/%s' % obj.name)
+            return result.json()
+        except Exception as e:
+            return None
 
 class NodeSerializer_Enc(serializers.Serializer):
     classes = serializers.StringRelatedField(many=True)

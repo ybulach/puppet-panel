@@ -85,5 +85,10 @@ angular.module('puppetPanel')
       templateUrl: 'static/views/certificates.html',
       controller: 'CertificatesCtrl',
       reloadOnSearch: false
+    })
+    .when('/certificates/:name', {
+      templateUrl: 'static/views/certificates.html',
+      controller: 'CertificatesCtrl',
+      reloadOnSearch: false
     });
 }]);
