@@ -118,10 +118,11 @@ class GroupSerializer_Light(serializers.ModelSerializer):
 
 class GroupSerializer_Full(GroupSerializer_Light):
     parameters = GroupParameterSerializer(many=True, read_only=True)
+    nodes = serializers.SlugRelatedField(slug_field='name', queryset=models.Node.objects.all(), many=True, required=False)
 
     class Meta(GroupSerializer_Light.Meta):
-        fields = GroupSerializer_Light.Meta.fields + ('parameters',)
-        read_only_fields = GroupSerializer_Light.Meta.read_only_fields + ('parameters',)
+        fields = GroupSerializer_Light.Meta.fields + ('parameters', 'nodes')
+        read_only_fields = GroupSerializer_Light.Meta.read_only_fields + ('parameters', 'nodes')
 
 # Nodes
 class NodeParameterSerializer(ValidatedSerializer):

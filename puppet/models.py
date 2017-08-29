@@ -38,15 +38,15 @@ class Group(models.Model):
     name = models.CharField(max_length=255, unique=True, validators=[validators.validate_group_name])
     default = models.BooleanField(default=False)
     parents = models.ManyToManyField('Group', blank=True)
-    classes = models.ManyToManyField(Class, blank=True)
+    classes = models.ManyToManyField(Class, related_name='groups', blank=True)
 
     def __unicode__(self):
         return "{0}".format(self.name, )
 
 class Node(models.Model):
     name = models.CharField(max_length=255, unique=True, validators=[validators.validate_node_name])
-    groups = models.ManyToManyField(Group, blank=True)
-    classes = models.ManyToManyField(Class, blank=True)
+    groups = models.ManyToManyField(Group, related_name='nodes', blank=True)
+    classes = models.ManyToManyField(Class, related_name='nodes', blank=True)
 
     def __unicode__(self):
         return "{0}".format(self.name, )
