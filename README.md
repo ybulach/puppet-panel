@@ -96,9 +96,8 @@ To install PuppetPanel on production server, a specific user and a virtualenv ar
     source env/bin/activate
     cd app
     git clone https://github.com/ybulach/puppet-panel .
-    pip install -r requirements
+    pip install -r requirements.txt
     bower install
-    python manage.py collectstatic
 
 If you want to activate virtualenv every time you `su` as this user:
 
@@ -106,7 +105,7 @@ If you want to activate virtualenv every time you `su` as this user:
 
 As an example, `nginx` and `uwsgi` are used to serve the Python app:
 
-    apt-get install nginx uwsgi
+    apt-get install nginx uwsgi uwsgi-plugin-python
 
 Here is a sample `/etc/uwsgi/apps-enabled/puppet-panel.ini` configuration:
 
@@ -158,6 +157,10 @@ As seen in the PuppetMaster configuration part above, the following SSL keys mus
 * `puppetpanel-client.crt`
 * `puppetpanel-client.key`
 * `puppetpanel-encryption.pub`
+
+After the configuration file has been created (see **Configuration** below), you will be able to fill the `static/` folder:
+
+    python manage.py collectstatic
 
 ### Upgrade
 To upgrade an existing PuppetPanel installation, you need to `su` as the specific user (here `puppet-panel`) and execute:
@@ -248,6 +251,10 @@ For encryption configuration, we are considering the names of SSL keys/certifica
 In order to use LDAP authentication, you need to install those dependencies (inside the virtualenv):
 
     pip install python-ldap django-auth-ldap
+
+**INFO**: additional system packages may be needed. For example on Debian:
+
+    apt-get install libsasl2-dev python-dev libldap2-dev libssl-dev
 
 Add this configuration to your `panel/settings_local.py` (here for OpenLDAP) and change it according to your needs:
 
