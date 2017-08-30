@@ -26,8 +26,6 @@ angular.module('puppetPanel')
 
   // Get the nodes
   var refresh = function() {
-    $scope.nodes.error = '';
-
     $http.get(ApiService.getConfig('url') + '/status')
     .then(function(result) {
       $scope.nodes.data = result.data;
@@ -40,6 +38,7 @@ angular.module('puppetPanel')
 
   // Autorefresh
   var autorefresh = $interval(function() {
+    $scope.nodes.error = '';
     refresh();
   }, 1000 * 15);
 

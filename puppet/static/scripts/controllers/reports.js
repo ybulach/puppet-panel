@@ -30,7 +30,6 @@ angular.module('puppetPanel')
 
   // Get the reports
   var refresh = function() {
-    $scope.reports.error = '';
     var page_reports = $scope.reports.table.page();
 
     $http.get(ApiService.getConfig('url') + '/reports')
@@ -47,6 +46,7 @@ angular.module('puppetPanel')
 
   // Autorefresh
   var autorefresh = $interval(function() {
+    $scope.reports.error = '';
     refresh();
   }, 1000 * 15);
 

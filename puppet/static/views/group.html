@@ -26,13 +26,13 @@
 
   <div class="row" ng-if="group.data.default">
     <div class="col-lg-12">
-      <div class="alert alert-info"><span class="label label-info">Default</span> This group is currently automatically added to all nodes</div>
+      <div uib-alert class="alert-info"><span class="label label-info">Default</span> This group is currently automatically added to all nodes</div>
     </div>
   </div>
 
   <div class="row" ng-if="group.error">
     <div class="col-lg-12">
-      <div class="alert alert-danger">{{group.error}}</div>
+      <div uib-alert class="alert-danger">{{group.error}}</div>
     </div>
   </div>
 

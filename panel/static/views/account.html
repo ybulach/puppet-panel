@@ -22,8 +22,8 @@
 
       <div class="panel panel-default">
         <div class="panel-body">
-          <div ng-if="account.error" class="alert alert-danger">{{account.error}}</div>
-          <div ng-if="account.success" class="alert alert-success">{{account.success}}</div>
+          <div uib-alert class="alert-danger" ng-if="account.error">{{account.error}}</div>
+          <div uib-alert class="alert-success" ng-if="account.success">{{account.success}}</div>
 
           <form role="form" name="account.form">
             <div class="form-group" ng-class="{'has-error': account.form.email.error}">
@@ -53,8 +53,8 @@
         API keys
       </h2>
 
-      <div ng-if="apikeys.error" class="alert alert-danger">{{apikeys.error}}</div>
-      <div ng-if="apikeys.success" class="alert alert-success">{{apikeys.success}}</div>
+      <div uib-alert class="alert-danger" ng-if="apikeys.error">{{apikeys.error}}</div>
+      <div uib-alert class="alert-success" ng-if="apikeys.success">{{apikeys.success}}</div>
 
       <div class="table-responsive">
         <table class="table table-hover table-striped" ng-table="apikeys.table" show-filter="false">

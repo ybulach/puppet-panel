@@ -22,7 +22,7 @@ angular.module('puppetPanel')
     return;
   }
 
-  $scope.groups = {error: '', status: '', data: []};
+  $scope.groups = {error: '', data: []};
   $scope.groups.table = new NgTableParams({sorting: {name: "asc"}}, {});
 
   // Get the groups
@@ -37,7 +37,6 @@ angular.module('puppetPanel')
   // Show view when loaded, and enable submit buttons
   $scope.$on('cfpLoadingBar:completed', function() {
     $scope.loaded = true;
-    $scope.groups.status = '';
   });
 
   // Common modal parent

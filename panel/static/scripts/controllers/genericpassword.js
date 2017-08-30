@@ -23,6 +23,7 @@ angular.module('puppetPanel')
   $scope.password = '';
 
   $scope.ok = function () {
+    $scope.error = '';
     $scope.status = 'pending';
     ApiService.cleanErrorsInForm($scope.passwordForm);
 

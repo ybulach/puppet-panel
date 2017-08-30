@@ -22,7 +22,7 @@ angular.module('puppetPanel')
     return;
   }
 
-  $scope.classes = {error: '', status: '', data: []};
+  $scope.classes = {error: '', data: []};
   $scope.classes.table = new NgTableParams({sorting: {name: "asc"}}, {});
 
   // Get the classes
@@ -45,7 +45,6 @@ angular.module('puppetPanel')
   // Show view when loaded, and enable submit buttons
   $scope.$on('cfpLoadingBar:completed', function() {
     $scope.loaded = true;
-    $scope.classes.status = '';
   });
 
   // Common modal parent

@@ -19,7 +19,7 @@
         Nodes status
       </h2>
       <h3><small ng-if="nodes.lastrefresh">Last refresh: {{nodes.lastrefresh | date: 'medium'}}</small><small ng-if="!nodes.lastrefresh">Refreshing</small></h3>
-      <div class="alert alert-danger" ng-if="nodes.error">{{nodes.error}}</div>
+      <div uib-alert class="alert-danger" ng-if="nodes.error">{{nodes.error}}</div>
     </div>
   </div>
 

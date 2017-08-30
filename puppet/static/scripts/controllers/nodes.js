@@ -38,8 +38,6 @@ angular.module('puppetPanel')
 
   // Get the nodes and orphans
   var refresh = function() {
-    $scope.nodes.error = '';
-    $scope.orphans.error = '';
     var page_nodes = $scope.nodes.table.page();
     var page_orphans = $scope.orphans.table.page();
 
@@ -67,6 +65,8 @@ angular.module('puppetPanel')
 
   // Autorefresh
   var autorefresh = $interval(function() {
+    $scope.nodes.error = '';
+    $scope.orphans.error = '';
     refresh();
   }, 1000 * 15);
 

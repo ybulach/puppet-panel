@@ -23,9 +23,11 @@ angular.module('puppetPanel')
   }
 
   $scope.user = {};
+  $scope.error = '';
   $scope.status = '';
 
   $scope.submit = function() {
+    $scope.error = '';
     $scope.status = 'pending';
     ApiService.cleanErrorsInForm($scope.loginForm);
 

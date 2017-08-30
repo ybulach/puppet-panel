@@ -22,7 +22,7 @@ angular.module('puppetPanel')
     return;
   }
 
-  $scope.parameters = {error: '', status: '', data: []};
+  $scope.parameters = {error: '', data: []};
   $scope.parameters.table = new NgTableParams({sorting: {name: "asc"}}, {});
 
   // Get the parameters

@@ -22,7 +22,7 @@ angular.module('puppetPanel')
     return;
   }
 
-  $scope.users = {error: '', status: '', data: []};
+  $scope.users = {error: '', data: []};
   $scope.users.table = new NgTableParams({sorting: {username: "asc"}}, {});
 
   // Get the users
@@ -37,7 +37,6 @@ angular.module('puppetPanel')
   // Show view when loaded, and enable submit buttons
   $scope.$on('cfpLoadingBar:completed', function() {
     $scope.loaded = true;
-    $scope.users.status = '';
   });
 
   // Common modal parent
