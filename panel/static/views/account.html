@@ -16,60 +16,68 @@
     <div class="col-lg-12">Loading...</div>
   </div>
 
-  <div class="row" ng-if="loaded">
-    <div class="col-lg-4">
-      <h2>Profile</h2>
+  <uib-tabset ng-if="loaded">
+    <uib-tab>
+      <uib-tab-heading>Profile</uib-tab-heading>
 
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <div uib-alert class="alert-danger" ng-if="account.error">{{account.error}}</div>
-          <div uib-alert class="alert-success" ng-if="account.success">{{account.success}}</div>
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <div uib-alert class="alert-danger" ng-if="account.error">{{account.error}}</div>
+              <div uib-alert class="alert-success" ng-if="account.success">{{account.success}}</div>
 
-          <form role="form" name="account.form">
-            <div class="form-group" ng-class="{'has-error': account.form.email.error}">
-              <label for="email" class="required">Email address</label>
-              <input type="email" class="form-control" name="email" ng-model="account.data.email" required>
-              <span class="help-block" ng-if="account.form.email.error">{{account.form.email.error}}</span>
+              <form role="form" name="account.form">
+                <div class="form-group" ng-class="{'has-error': account.form.email.error}">
+                  <label for="email" class="required">Email address</label>
+                  <input type="email" class="form-control" name="email" ng-model="account.data.email" required>
+                  <span class="help-block" ng-if="account.form.email.error">{{account.form.email.error}}</span>
+                </div>
+                <div class="form-group" ng-class="{'has-error': account.form.current_password.error}">
+                  <label for="current_password" class="required">Current password</label>
+                  <input type="password" class="form-control" name="current_password" ng-model="account.data.current_password">
+                  <span class="help-block" ng-if="account.form.current_password.error">{{account.form.current_password.error}}</span>
+                </div>
+                <div class="form-group" ng-class="{'has-error': account.form.new_password.error}">
+                  <label for="new_password" class="required">New password</label>
+                  <input type="password" class="form-control" name="new_password" ng-model="account.data.new_password">
+                  <span class="help-block" ng-if="account.form.new_password.error">{{account.form.new_password.error}}</span>
+                </div>
+                <button type="submit" class="btn btn-success" ng-click="account.submit()" ng-disabled="account.status === 'pending' || !account.form.$valid"><span class="glyphicon glyphicon-ok"></span> Save changes</button>
+              </form>
             </div>
-            <div class="form-group" ng-class="{'has-error': account.form.current_password.error}">
-              <label for="current_password" class="required">Current password</label>
-              <input type="password" class="form-control" name="current_password" ng-model="account.data.current_password">
-              <span class="help-block" ng-if="account.form.current_password.error">{{account.form.current_password.error}}</span>
-            </div>
-            <div class="form-group" ng-class="{'has-error': account.form.new_password.error}">
-              <label for="new_password" class="required">New password</label>
-              <input type="password" class="form-control" name="new_password" ng-model="account.data.new_password">
-              <span class="help-block" ng-if="account.form.new_password.error">{{account.form.new_password.error}}</span>
-            </div>
-            <button type="submit" class="btn btn-success" ng-click="account.submit()" ng-disabled="account.status === 'pending' || !account.form.$valid"><span class="glyphicon glyphicon-ok"></span> Save changes</button>
-          </form>
+          </div>
         </div>
       </div>
-    </div>
+    </uib-tab>
 
-    <div class="col-lg-8">
-      <h2>
-        <button type="button" class="btn btn-success pull-right" ng-click="apikeys.create()" ng-disabled="apikeys.status === 'pending'"><span class="glyphicon glyphicon-plus"></span> Generate an API key</button>
-        API keys
-      </h2>
+    <uib-tab>
+      <uib-tab-heading>API keys</uib-tab-heading>
 
-      <div uib-alert class="alert-danger" ng-if="apikeys.error">{{apikeys.error}}</div>
-      <div uib-alert class="alert-success" ng-if="apikeys.success">{{apikeys.success}}</div>
+      <div class="row">
+        <div class="col-lg-12">
+          <button type="button" class="btn btn-success pull-right" ng-click="apikeys.create()" ng-disabled="apikeys.status === 'pending'"><span class="glyphicon glyphicon-plus"></span> Generate an API key</button>
+          <div class="clearfix"></div>
 
-      <div class="table-responsive">
-        <table class="table table-hover table-striped" ng-table="apikeys.table" show-filter="false">
-          <tbody>
-            <tr ng-repeat="apikey in $data">
-              <td title="'Key'" sortable="'key'">{{apikey.key}}</td>
-              <td title="'Created at'" sortable="'created_at'">{{apikey.created_at | date: 'medium'}}</td>
-              <td class="text-right"><button type="button" class="btn btn-danger" ng-click="apikeys.delete(apikey.key)"><span class="glyphicon glyphicon-trash"></span> Delete</button></td>
-            </tr>
-            <tr ng-if="!apikeys.table.data.length">
-              <td colspan="3">No API key. Add one to see it here !</td>
-            </tr>
-          </tbody>
-        </table>
+          <div uib-alert class="alert-danger" ng-if="apikeys.error">{{apikeys.error}}</div>
+          <div uib-alert class="alert-success" ng-if="apikeys.success">{{apikeys.success}}</div>
+
+          <div class="table-responsive">
+            <table class="table table-hover table-striped" ng-table="apikeys.table" show-filter="false">
+              <tbody>
+                <tr ng-repeat="apikey in $data">
+                  <td title="'Key'" sortable="'key'">{{apikey.key}}</td>
+                  <td title="'Created at'" sortable="'created_at'">{{apikey.created_at | date: 'medium'}}</td>
+                  <td class="text-right"><button type="button" class="btn btn-danger" ng-click="apikeys.delete(apikey.key)"><span class="glyphicon glyphicon-trash"></span> Delete</button></td>
+                </tr>
+                <tr ng-if="!apikeys.table.data.length">
+                  <td colspan="3">No API key. Add one to see it here !</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
+    </uib-tab>
+  </uib-tabset>
 </div>

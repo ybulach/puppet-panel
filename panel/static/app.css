@@ -4,6 +4,10 @@ body {
   padding-bottom: 60px;
 }
 
+.nav-tabs {
+  margin-bottom: 2rem;
+}
+
 /* Show required fields in forms */
 .required:after {
   content: "*";

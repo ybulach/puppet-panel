@@ -29,125 +29,138 @@
     </div>
   </div>
 
-  <div class="row" ng-if="loaded && !node.error">
-    <div class="col-lg-4">
-      <h2>Summary</h2>
+  <uib-tabset ng-if="loaded && !node.error">
+    <uib-tab>
+      <uib-tab-heading>Summary</uib-tab-heading>
 
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <div class="pull-right">
-            <span class="label label-success" ng-if="node.data.status == 'unchanged'">Success</span>
-            <span class="label label-danger" ng-if="node.data.status == 'failed'">Failed</span>
-            <span class="label label-info" ng-if="node.data.status == 'changed'">Changed</span>
-            <span class="label label-warning" ng-if="node.data.status == 'unreported'">Unreported</span>
-            <span class="label label-default" ng-if="!node.data.status">Unknown</span>
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <div class="pull-right">
+                <span class="label label-success" ng-if="node.data.status == 'unchanged'">Success</span>
+                <span class="label label-danger" ng-if="node.data.status == 'failed'">Failed</span>
+                <span class="label label-info" ng-if="node.data.status == 'changed'">Changed</span>
+                <span class="label label-warning" ng-if="node.data.status == 'unreported'">Unreported</span>
+                <span class="label label-default" ng-if="!node.data.status">Unknown</span>
+              </div>
+
+               Status
+            </div>
+            <div class="panel-body">
+              <div class="pull-right">
+                <span class="label label-info" ng-if="node.data.certificate.state == 'requested'">Requested</span>
+                <span class="label label-success" ng-if="node.data.certificate.state == 'signed'">Signed</span>
+                <span class="label label-danger" ng-if="node.data.certificate.state == 'revoked'">Revoked</span>
+                <span class="label label-default" ng-if="!node.data.certificate">Unknown</span>
+              </div>
+              <p>
+                <small><em>PuppetCA certificate</em></small><br>
+                <span ng-if="node.data.certificate"><a ng-href="#/certificates/{{node.data.certificate.name}}">{{node.data.certificate.name}}</a></span>
+                <span ng-if="!node.data.certificate">Unknown</span>
+              </p>
+
+              <p>
+                <small><em>Last report</em></small><br>
+                <span>{{node.data.report_timestamp | date: 'medium'}}</span>
+                <span ng-if="!node.data.report_timestamp">None</span>
+              </p>
+              <p>
+                <small><em>Last catalog</em></small><br>
+                <span>{{node.data.catalog_timestamp | date: 'medium'}}</span>
+                <span ng-if="!node.data.catalog_timestamp">None</span>
+              </p>
+              <p>
+                <small><em>Last facts</em></small><br>
+                <span>{{node.data.facts_timestamp | date: 'medium'}}</span>
+                <span ng-if="!node.data.facts_timestamp">None</span>
+              </p>
+            </div>
           </div>
-
-           Status
         </div>
-        <div class="panel-body">
-          <div class="pull-right">
-            <span class="label label-info" ng-if="node.data.certificate.state == 'requested'">Requested</span>
-            <span class="label label-success" ng-if="node.data.certificate.state == 'signed'">Signed</span>
-            <span class="label label-danger" ng-if="node.data.certificate.state == 'revoked'">Revoked</span>
-            <span class="label label-default" ng-if="!node.data.certificate">Unknown</span>
+
+        <div class="col-lg-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">Classes</div>
+            <div class="panel-body">
+              <span ng-repeat="class in node.data.classes"><a class="label label-default" ng-href="#/classes/{{class}}">{{class}}</a> </span>
+              <span ng-if="!node.data.classes.length">None</span>
+            </div>
           </div>
-          <p>
-            <small><em>PuppetCA certificate</em></small><br>
-            <span ng-if="node.data.certificate"><a ng-href="#/certificates/{{node.data.certificate.name}}">{{node.data.certificate.name}}</a></span>
-            <span ng-if="!node.data.certificate">Unknown</span>
-          </p>
+        </div>
 
-          <p>
-            <small><em>Last report</em></small><br>
-            <span>{{node.data.report_timestamp | date: 'medium'}}</span>
-            <span ng-if="!node.data.report_timestamp">None</span>
-          </p>
-          <p>
-            <small><em>Last catalog</em></small><br>
-            <span>{{node.data.catalog_timestamp | date: 'medium'}}</span>
-            <span ng-if="!node.data.catalog_timestamp">None</span>
-          </p>
-          <p>
-            <small><em>Last facts</em></small><br>
-            <span>{{node.data.facts_timestamp | date: 'medium'}}</span>
-            <span ng-if="!node.data.facts_timestamp">None</span>
-          </p>
+        <div class="col-lg-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">Groups</div>
+            <div class="panel-body">
+              <span ng-repeat="group in node.data.groups"><a class="label label-default" ng-href="#/groups/{{group}}">{{group}}</a> </span>
+              <span ng-if="!node.data.groups.length">None</span>
+            </div>
+          </div>
         </div>
       </div>
+    </uib-tab>
 
-      <div class="panel panel-default">
-        <div class="panel-heading">Classes</div>
-        <div class="panel-body">
-          <span ng-repeat="class in node.data.classes"><a class="label label-default" ng-href="#/classes/{{class}}">{{class}}</a> </span>
-          <span ng-if="!node.data.classes.length">None</span>
+    <uib-tab>
+      <uib-tab-heading>Parameters</uib-tab-heading>
+
+      <div class="row">
+        <div class="col-lg-12">
+          <button type="button" class="btn btn-success pull-right" ng-click="parameters.edit(undefined)"><span class="glyphicon glyphicon-plus"></span> Add parameter</button>
+          <div class="clearfix"></div>
+
+          <div class="table-responsive">
+            <table class="table table-hover table-striped table-nowrap" ng-table="parameters" show-filter="true">
+              <tbody>
+                <tr ng-repeat="parameter in $data">
+                  <td title="'Name'" sortable="'name'" filter="{name: 'text'}">{{parameter.name}}</td>
+                  <td title="'Value'" sortable="'value'" filter="{value: 'text'}">
+                    <span class="glyphicon glyphicon-lock" ng-if="parameter.encrypted"> Encrypted</span>
+                    <span ng-if="!parameter.encrypted">{{parameter.value}}</span>
+                  </td>
+                  <td class="text-right">
+                    <button type="button" class="btn btn-default" ng-click="parameters.edit(parameter)"><span class="glyphicon glyphicon-pencil"></span> Edit</button>
+                    <button type="button" class="btn btn-danger" ng-click="parameters.delete(parameter)"><span class="glyphicon glyphicon-trash"></span> Delete</button>
+                  </td>
+                </tr>
+                <tr ng-if="!parameters.data.length">
+                  <td colspan="3">No parameter found.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
+    </uib-tab>
 
-      <div class="panel panel-default">
-        <div class="panel-heading">Groups</div>
-        <div class="panel-body">
-          <span ng-repeat="group in node.data.groups"><a class="label label-default" ng-href="#/groups/{{group}}">{{group}}</a> </span>
-          <span ng-if="!node.data.groups.length">None</span>
+    <uib-tab>
+      <uib-tab-heading>Reports</uib-tab-heading>
+
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="table-responsive">
+            <table class="table table-hover table-striped" ng-table="reports" show-filter="false">
+              <tbody>
+                <tr ng-repeat="report in $data">
+                  <td title="'Transaction'" sortable="'transaction'"><a ng-href="#/reports/{{report.transaction}}">{{report.transaction}}</a></td>
+                  <td title="'Status'" sortable="'status'">
+                    <div class="label label-success" ng-if="report.status == 'unchanged'">Success</div>
+                    <div class="label label-danger" ng-if="report.status == 'failed'">Failed</div>
+                    <div class="label label-info" ng-if="report.status == 'changed'">Changed</div>
+                    <div class="label label-warning" ng-if="report.status == 'unreported'">Unreported</div>
+                    <div class="label label-default" ng-if="!report.status">Unknown</div>
+                  </td>
+                  <td title="'Start time'" sortable="'start'">{{report.start | date: 'medium'}}</td>
+                  <td title="'End time'" sortable="'end'">{{report.end | date: 'medium'}}</td>
+                </tr>
+                <tr ng-if="!reports.data.length">
+                  <td colspan="4">No report for this node.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
-
-    <div class="col-lg-8">
-      <h2>
-        <button type="button" class="btn btn-success pull-right" ng-click="parameters.edit(undefined)"><span class="glyphicon glyphicon-plus"></span> Add parameter</button>
-        Parameters
-      </h2>
-      <div class="clearfix"></div>
-
-      <div class="table-responsive">
-        <table class="table table-hover table-striped table-nowrap" ng-table="parameters" show-filter="true">
-          <tbody>
-            <tr ng-repeat="parameter in $data">
-              <td title="'Name'" sortable="'name'" filter="{name: 'text'}">{{parameter.name}}</td>
-              <td title="'Value'" sortable="'value'" filter="{value: 'text'}">
-                <span class="glyphicon glyphicon-lock" ng-if="parameter.encrypted"> Encrypted</span>
-                <span ng-if="!parameter.encrypted">{{parameter.value}}</span>
-              </td>
-              <td class="text-right">
-                <button type="button" class="btn btn-default" ng-click="parameters.edit(parameter)"><span class="glyphicon glyphicon-pencil"></span> Edit</button>
-                <button type="button" class="btn btn-danger" ng-click="parameters.delete(parameter)"><span class="glyphicon glyphicon-trash"></span> Delete</button>
-              </td>
-            </tr>
-            <tr ng-if="!parameters.data.length">
-              <td colspan="3">No parameter found.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <div class="row" ng-if="loaded && !node.error">
-    <div class="col-lg-12">
-      <h2>Reports</h2>
-
-      <div class="table-responsive">
-        <table class="table table-hover table-striped" ng-table="reports" show-filter="false">
-          <tbody>
-            <tr ng-repeat="report in $data">
-              <td title="'Transaction'" sortable="'transaction'"><a ng-href="#/reports/{{report.transaction}}">{{report.transaction}}</a></td>
-              <td title="'Status'" sortable="'status'">
-                <div class="label label-success" ng-if="report.status == 'unchanged'">Success</div>
-                <div class="label label-danger" ng-if="report.status == 'failed'">Failed</div>
-                <div class="label label-info" ng-if="report.status == 'changed'">Changed</div>
-                <div class="label label-warning" ng-if="report.status == 'unreported'">Unreported</div>
-                <div class="label label-default" ng-if="!report.status">Unknown</div>
-              </td>
-              <td title="'Start time'" sortable="'start'">{{report.start | date: 'medium'}}</td>
-              <td title="'End time'" sortable="'end'">{{report.end | date: 'medium'}}</td>
-            </tr>
-            <tr ng-if="!reports.data.length">
-              <td colspan="4">No report for this node.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+    </uib-tab>
+  </uib-tabset>
 </div>
